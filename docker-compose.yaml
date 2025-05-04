@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  postgresql:
+    image: bitnami/postgresql:14
+    volumes:
+      - postgresql:/var/lib/postgresql
+    ports:
+      - "5001:5432"
+    environment:
+      POSTGRESQL_USER: samyeung
+      POSTGRESQL_PASSWORD: samyeung
+    restart: always
+  cms-backend:
+    depends_on:
+      - postgresql
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_HOST: postgresql
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: samyeung
+      DATABASE_PASSWORD: samyeung
+      DATABASE_DATABASE: cms
+volumes:
+  postgresql:
