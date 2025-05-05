@@ -1,9 +1,9 @@
 import {DynamicModule, Global, Module} from '@nestjs/common';
-import {UserRepository} from './repositories/user.repository';
+import {UserRepository} from './repositories';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigModule} from "../config/config.module";
 import {DatabaseConfigService} from "../config/database-config/database-config.service";
-import {User} from "./entities/user.entity";
+import {User} from "./entities";
 
 @Global()
 @Module({

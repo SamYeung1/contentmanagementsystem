@@ -1,6 +1,7 @@
-import {Module} from '@nestjs/common';
-import {UserModule} from './user/user.module';
+import {MiddlewareConsumer, Module} from '@nestjs/common';
+import {UserModule} from './cms/user/user.module';
 import {DatabaseModule} from "./database/database.module";
+import {LoggerMiddleware} from "./common/middleware/logger.middleware";
 
 @Module({
     imports: [DatabaseModule,UserModule],
@@ -8,4 +9,9 @@ import {DatabaseModule} from "./database/database.module";
     providers: [],
 })
 export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(LoggerMiddleware)
+            .forRoutes("*")
+    }
 }

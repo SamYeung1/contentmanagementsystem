@@ -5,7 +5,7 @@ import {Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
 
 @Injectable()
-export class UserRepository implements CrudInterface<User> {
+export class UserRepository implements CrudInterface<number, User> {
     constructor(@InjectRepository(User) private readonly repository: Repository<User>) {
     }
 
@@ -14,7 +14,7 @@ export class UserRepository implements CrudInterface<User> {
     }
 
     async delete(id: number): Promise<boolean> {
-        return (await this.repository.delete(id))?.affected >= 1;
+        return (await this.repository.update(id, {isDeleted: true}))?.affected >= 1;
     }
 
     async update(id: number, input: Omit<User, "id">): Promise<User> {
@@ -24,6 +24,10 @@ export class UserRepository implements CrudInterface<User> {
         user.email = input.email;
         user.password = input.password;
         return this.repository.save(user);
+    }
+
+    async findById(id: number): Promise<User> {
+        return this.repository.findOneBy({id: id,isDeleted: false});
     }
 
 
