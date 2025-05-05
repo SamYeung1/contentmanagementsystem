@@ -3,7 +3,7 @@ services:
   postgresql:
     image: bitnami/postgresql:14
     volumes:
-      - postgresql:/var/lib/postgresql
+      - postgresql:/bitnami/postgresql
     ports:
       - "5001:5432"
     environment:

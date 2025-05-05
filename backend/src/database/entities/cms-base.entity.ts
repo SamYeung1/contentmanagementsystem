@@ -2,14 +2,14 @@ import {Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn} from
 
 export abstract class CmsBase {
     @PrimaryGeneratedColumn()
-    id: number;
+    id?: number;
 
     @Column({type: 'boolean', default: false, name: 'is_deleted'})
-    isDeleted: boolean;
+    isDeleted?: boolean;
 
     @CreateDateColumn({type: 'timestamp', name: 'created_at'})
-    createdAt: Date;
+    createdAt?: Date;
 
     @UpdateDateColumn({type: 'timestamp', name: 'updated_at'})
-    updatedAt: Date;
+    updatedAt?: Date;
 }

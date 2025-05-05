@@ -4,8 +4,11 @@ import {hash} from "argon2";
 
 @Entity({name:'users'})
 export class User extends CmsBase {
-
-    @Column({type: 'varchar', length: 30,nullable:false})
+    constructor(params?: Partial<User>) {
+        super();
+        Object.assign(this, params);
+    }
+    @Column({type: 'varchar',nullable:false})
     name: string;
 
     @Column({type: 'varchar',nullable:false})

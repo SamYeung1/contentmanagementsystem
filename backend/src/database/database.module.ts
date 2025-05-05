@@ -1,10 +1,11 @@
-import {Module} from '@nestjs/common';
+import {DynamicModule, Global, Module} from '@nestjs/common';
 import {UserRepository} from './repositories/user.repository';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigModule} from "../config/config.module";
 import {DatabaseConfigService} from "../config/database-config/database-config.service";
 import {User} from "./entities/user.entity";
 
+@Global()
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({
@@ -20,9 +21,9 @@ import {User} from "./entities/user.entity";
                 database: configService.databaseConfig.database,
                 synchronize: true,
                 logging: true,
-            })
+            }),
         }),
-    ],
+        TypeOrmModule.forFeature([User])],
     providers: [UserRepository],
     exports: [UserRepository]
 })

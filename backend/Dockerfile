@@ -16,4 +16,5 @@ USER appuser
 
 EXPOSE 3000
 
+RUN ["npm","run","database:init"]
 CMD ["npm", "run", "start"]

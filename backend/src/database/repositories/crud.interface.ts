@@ -1,5 +1,5 @@
-export default interface CrudInterface<T> {
-    create: (data: T) => Promise<T>;
-    update: (data: T) => Promise<T>;
-    delete: (id: T) => Promise<boolean>;
+export default interface CrudInterface<I> {
+    create: (input: I) => Promise<I>;
+    update: (id:number,input: Omit<I,keyof I>) => Promise<I>;
+    delete: (id: number) => Promise<boolean>;
 }
