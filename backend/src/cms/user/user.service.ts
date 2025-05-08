@@ -1,6 +1,8 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
 import {UserRepository} from "../../database/repositories";
 import {User} from "../../database/entities";
+import {Ordering, Paging, PagingResult} from "../../common/type";
+import {DatabaseFilterUtil} from "../../common/util";
 
 @Injectable()
 export class UserService {
@@ -24,11 +26,23 @@ export class UserService {
         }
         return this.userRepository.delete(parseInt(id));
     }
+
     async getUser(id: string): Promise<User> {
-        let user:User = await this.userRepository.findById(parseInt(id));
+        let user: User = await this.userRepository.findById(parseInt(id));
         if (!user) {
             throw new NotFoundException('User does not exist');
         }
         return user;
+    }
+
+    async findUsersByKeywordPaginate(like?: Record<keyof User, string>, paginate: Paging = {
+        page: 1,
+        limit: 10
+    }, orderBy: Ordering<User> = {id: 'asc'}): Promise<PagingResult<User>> {
+        let where = {}
+        if (like) {
+            where = DatabaseFilterUtil.createLikeFilter<User>(like);
+        }
+        return this.userRepository.findByWithPagination({...where, isDeleted: false}, orderBy, paginate);
     }
 }

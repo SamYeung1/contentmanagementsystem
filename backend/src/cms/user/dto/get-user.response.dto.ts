@@ -1,7 +1,6 @@
-import {Expose} from "class-transformer";
+import {Expose, Type} from "class-transformer";
 import {User} from "../../../database/entities";
 
-@Expose()
 export class GetUserResponseDto {
     @Expose()
     id: string;
@@ -15,6 +14,12 @@ export class GetUserResponseDto {
     createdAt: Date;
     @Expose()
     updatedAt: Date;
+    @Expose()
+    @Type(() => GetUserResponseDto)
+    createdBy: GetUserResponseDto;
+    @Expose()
+    @Type(() => GetUserResponseDto)
+    updatedBy: GetUserResponseDto;
     constructor(params?: Partial<User>) {
         Object.assign(this, params);
     }

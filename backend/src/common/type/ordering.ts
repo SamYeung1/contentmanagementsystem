@@ -1,0 +1,1 @@
+export type Ordering<T> = Partial<Record<keyof T, 'asc'| 'desc'>>

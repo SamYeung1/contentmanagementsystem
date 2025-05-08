@@ -1,12 +1,12 @@
 import {AppDataSource} from "./data-source"
-import {User} from "./database/entities/user.entity";
+import {User} from "./database/entities";
 
 const userRepository = AppDataSource.getRepository(User);
 AppDataSource.initialize().then(async () => {
 
     console.log("Inserting a new user into the database...");
     if (!await userRepository.exists({where: {email: "admin@gmail.com"}})) {
-        userRepository.create(new User({
+        await userRepository.save(new User({
             email: "admin@gmail.com",
             password: "123456",
             name: "admin"

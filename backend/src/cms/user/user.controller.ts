@@ -1,9 +1,11 @@
-import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query} from '@nestjs/common';
 import {UserService} from "./user.service";
-import {CreateUserDto, CreateUserResponseDto, UpdateUserDto, UpdateUserResponseDto} from "./dto";
-import {Serialize} from "../../common/interceptor/serialize/serialize.interceptor";
+import {CreateUserDto, CreateUserResponseDto, UpdateUserDto, UpdateUserResponseDto, GetUserResponseDto} from "./dto";
+import {Serialize} from "../../common/interceptor";
 import {User} from "../../database/entities";
-import {GetUserResponseDto} from "./dto/get-user.response.dto";
+import {Ordering, Paging, PagingResult} from "../../common/type";
+import {PagingResultDto} from "../../common/dto";
+import {Filter} from "typeorm";
 
 @Controller('users')
 export class UserController {
@@ -33,5 +35,12 @@ export class UserController {
     @Get(':id')
     async getUser(@Param("id") id: string): Promise<GetUserResponseDto> {
         return new GetUserResponseDto(await this.userService.getUser(id));
+    }
+
+    @Serialize(PagingResultDto<GetUserResponseDto>)
+    @Get()
+    async listUsers(@Query("paginate") paginate: Paging, @Query("filter") filter?: Filter<User>, @Query("orderBy") orderBy?: Ordering<GetUserResponseDto>): Promise<PagingResultDto<GetUserResponseDto>> {
+        const result: PagingResult<User> = await this.userService.findUsersByKeywordPaginate(filter?.like, paginate, orderBy);
+        return new PagingResultDto<GetUserResponseDto>(result.total, result.result.map((item) => new GetUserResponseDto(item)));
     }
 }

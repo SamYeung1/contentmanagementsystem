@@ -1,4 +1,4 @@
-import {BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {CmsBase} from "./cms-base.entity";
 import {hash} from "argon2";
 
@@ -18,9 +18,16 @@ export class User extends CmsBase {
     @Column({type: 'varchar',nullable:false})
     password: string;
 
+    @OneToOne((type) => User)
+    @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+    createdBy: User;
+    @OneToOne((type) => User)
+    @JoinColumn({ name: 'updated_by', referencedColumnName: 'id' })
+    updatedBy: User;
+
     @BeforeInsert()
     @BeforeUpdate()
-    async hashPassword() {
+    private async hashPassword() {
         if (this.password) {
             this.password = await hash(this.password);
         }

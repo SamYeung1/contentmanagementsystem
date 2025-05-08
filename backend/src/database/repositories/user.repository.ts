@@ -1,8 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import CrudInterface from "./crud.interface";
-import {User} from "../entities/user.entity";
-import {Repository} from "typeorm";
+import {User} from "../entities";
+import {FindOptionsOrder, FindOptionsWhere, Repository, FindOptionsRelations} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
+import {Paging} from "../../common/type";
+import {PagingResult} from "../../common/type";
 
 @Injectable()
 export class UserRepository implements CrudInterface<number, User> {
@@ -27,8 +29,33 @@ export class UserRepository implements CrudInterface<number, User> {
     }
 
     async findById(id: number): Promise<User> {
-        return this.repository.findOneBy({id: id,isDeleted: false});
+        return this.repository.findOne({
+            where: {id: id, isDeleted: false},
+            relations: {createdBy: true, updatedBy: true}
+        });
     }
 
+    async findBy(filter: FindOptionsWhere<User>, orderBy: FindOptionsOrder<User>): Promise<User[]> {
+        const relations: FindOptionsRelations<User> = {createdBy: true, updatedBy: true};
+        const where: FindOptionsWhere<User> = {...filter, isDeleted: false};
+        return this.repository.find({
+            where: where,
+            relations: relations,
+            order: orderBy,
+        });
+    }
+
+    async findByWithPagination(filter: FindOptionsWhere<User>, orderBy: FindOptionsOrder<User>, paginate: Paging): Promise<PagingResult<User>> {
+        const relations: FindOptionsRelations<User> = {createdBy: true, updatedBy: true};
+        const where: FindOptionsWhere<User> = {...filter, isDeleted: false};
+        const [data, total] = await this.repository.findAndCount({
+            where: where,
+            relations: relations,
+            order: orderBy,
+            take: paginate.limit,
+            skip: (paginate.page - 1) * paginate.limit
+        });
+        return {total: total, result: data};
+    }
 
 }
