@@ -1,4 +1,4 @@
 export type Paging = {
-    limit: number;
-    page: number;
+  limit: number;
+  page: number;
 }

@@ -1,1 +1,1 @@
-export * from "./serialize/serialize.interceptor";
+export * from './serialize/serialize.interceptor';

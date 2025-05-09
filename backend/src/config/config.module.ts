@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { DatabaseConfigService } from './database-config/database-config.service';
+import { AuthConfigService } from './database-config/auth-config.service';
 
+@Global()
 @Module({
-  providers: [DatabaseConfigService],
-  exports: [DatabaseConfigService],
+  providers: [DatabaseConfigService, AuthConfigService],
+  exports: [DatabaseConfigService, AuthConfigService],
 })
-export class ConfigModule {}
+export class ConfigModule {
+}

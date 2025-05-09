@@ -1,1 +1,1 @@
-export * from "./database-filter.util"
+export * from './database-filter.util';
