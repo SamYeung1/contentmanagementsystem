@@ -18,12 +18,15 @@ export class UserAuthRepository implements CrudInterface<string, UserAuthEntity>
     return (await this.repository.delete(id))?.affected >= 1;
   }
 
-  update(token_id: string, input: Omit<UserAuthEntity, 'tokenId'>): Promise<UserAuthEntity> {
-    const userAuth: UserAuthEntity = new UserAuthEntity();
-    userAuth.tokenId = token_id;
-    userAuth.user = input.user;
+  async update(token_id: string, input: Partial<Omit<UserAuthEntity, 'tokenId' | 'user'>>): Promise<UserAuthEntity> {
+    const relations: FindOptionsRelations<UserAuthEntity> = { user: true };
+    const userAuth: UserAuthEntity = await this.repository.findOne({
+      where:{tokenId:token_id},
+      relations:relations
+  })
     userAuth.refreshTokenExpiredAt = input.refreshTokenExpiredAt;
-    return this.repository.save(userAuth);
+    userAuth.protectedTicket = input.protectedTicket;
+    return await this.repository.save(userAuth);
   }
 
   findBy(filter: any, orderBy: any): Promise<UserAuthEntity[]> {

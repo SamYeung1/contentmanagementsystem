@@ -3,7 +3,7 @@ services:
   postgresql:
     image: bitnami/postgresql:14
     volumes:
-      - postgresql:/bitnami/postgresql
+      - ./docker_volumes/postgresql:/bitnami/postgresql
     ports:
       - "5001:5432"
     environment:
@@ -28,5 +28,3 @@ services:
       AUTH_PUBLIC_KEY_PATH: '/usr/src/app/src/storage/auth-public.pem'
       AUTH_PRIVATE_JWT_EXPIRES_IN: '1' #Hour
       AUTH_REFRESH_TOKEN_IN: '1' #Month
-volumes:
-  postgresql:

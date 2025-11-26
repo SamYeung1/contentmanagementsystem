@@ -26,4 +26,8 @@ export class UserAuthEntity {
   refreshTokenExpiredAt: Date;
   @Column({ type: 'enum', enum: AuthType })
   type: AuthType;
+  @Column({ type: 'timestamp', name: 'issue_at', nullable: false })
+  issueAt: Date;
+  @Column({ type: 'varchar', name: 'protected_ticket', nullable: false })
+  protectedTicket: string;
 }
