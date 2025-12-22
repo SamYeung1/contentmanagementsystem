@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions, JwtService } from '@nestjs/jwt';
 import { AuthConfigService } from '../../config/database-config/auth-config.service';
 import * as fs from 'fs';
 
@@ -18,8 +18,9 @@ import * as fs from 'fs';
       },
     }),
   })],
-  providers: [AuthService],
+  providers: [AuthService, AuthConfigService],
   controllers: [AuthController],
+  exports: [AuthConfigService, JwtModule],
 })
 export class AuthModule {
 }

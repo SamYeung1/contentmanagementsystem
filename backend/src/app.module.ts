@@ -3,11 +3,18 @@ import { UserModule } from './cms/user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { LoggerMiddleware } from './common/middleware';
 import { AuthModule } from './cms/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './common/guard';
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule],
+  imports: [
+    DatabaseModule,
+    UserModule,
+    AuthModule,
+    ConfigModule.forRoot()
+  ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

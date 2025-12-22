@@ -10,15 +10,18 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {
   }
 
-  async createUser(user: CreateUserDto): Promise<UserEntity> {
-    return await this.userRepository.create(new UserEntity(user));
+  async createUser(user: CreateUserDto, currentUser: UserEntity): Promise<UserEntity> {
+    return await this.userRepository.create(new UserEntity({ ...user,updatedBy: currentUser,createdBy:currentUser }));
   }
 
-  async updateUser(id: string, user: UpdateUserDto): Promise<UserEntity> {
+  async updateUser(id: string, user: UpdateUserDto, currentUser: UserEntity): Promise<UserEntity> {
     if (!await this.userRepository.findById(parseInt(id))) {
       throw new NotFoundException('User does not exist');
     }
-    return await this.userRepository.update(parseInt(id), new UserEntity(user));
+    return await this.userRepository.update(parseInt(id), new UserEntity({
+      ...user,
+      updatedBy: currentUser,
+    }));
   }
 
   async deleteUser(id: string): Promise<boolean> {

@@ -1,4 +1,13 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn, ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CmsBaseEntity } from './cms-base.entity';
 import { hash } from 'argon2';
 
@@ -19,10 +28,10 @@ export class UserEntity extends CmsBaseEntity {
   @Column({ type: 'varchar', nullable: false })
   password: string;
 
-  @OneToOne((type) => UserEntity)
+  @ManyToOne((type) => UserEntity)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   createdBy: UserEntity;
-  @OneToOne((type) => UserEntity)
+  @ManyToOne((type) => UserEntity)
   @JoinColumn({ name: 'updated_by', referencedColumnName: 'id' })
   updatedBy: UserEntity;
 

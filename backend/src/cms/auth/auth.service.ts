@@ -13,6 +13,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import { RefreshDto } from './dto/refresh.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { LogoutDto } from './dto/logout.dto';
 
 interface DecryptedToken {
   jti: string;
@@ -94,5 +95,20 @@ export class AuthService {
       padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
     }, data);
     return result.toString('hex');
+  }
+
+  async logout(input: LogoutDto) {
+    const decryptedToken: DecryptedToken = JSON.parse(crypto.privateDecrypt({
+      key: this.privateKey,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+    }, Buffer.from(input.refresh_token, 'hex')).toString('utf8'));
+    const userAuth = await this.userAuthRepository.findById(decryptedToken.jti);
+    if (!userAuth) {
+      throw new AuthErrorException();
+    }
+    if(decryptedToken.protectedTicket !== userAuth.protectedTicket || utc().isAfter(userAuth.refreshTokenExpiredAt)) {
+      throw new AuthErrorException();
+    }
+    await this.userAuthRepository.delete(userAuth.tokenId);
   }
 }
