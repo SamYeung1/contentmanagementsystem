@@ -4,12 +4,12 @@ export abstract class CmsBaseEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @Column({ type: 'boolean', default: false, name: 'is_deleted' })
+  @Column({ type: 'boolean', default: false })
   isDeleted?: boolean;
 
-  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt?: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
+  @UpdateDateColumn({ type: 'timestamp'})
   updatedAt?: Date;
 }

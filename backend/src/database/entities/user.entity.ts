@@ -4,9 +4,6 @@ import {
   Column,
   Entity,
   JoinColumn, ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CmsBaseEntity } from './cms-base.entity';
 import { hash } from 'argon2';
@@ -29,10 +26,10 @@ export class UserEntity extends CmsBaseEntity {
   password: string;
 
   @ManyToOne((type) => UserEntity)
-  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  @JoinColumn({ referencedColumnName: 'id' })
   createdBy: UserEntity;
   @ManyToOne((type) => UserEntity)
-  @JoinColumn({ name: 'updated_by', referencedColumnName: 'id' })
+  @JoinColumn({ referencedColumnName: 'id' })
   updatedBy: UserEntity;
 
   @BeforeInsert()

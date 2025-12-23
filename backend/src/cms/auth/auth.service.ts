@@ -48,7 +48,7 @@ export class AuthService {
       }));
       return new LoginResponseDto(
         'Bearer',
-        parseInt(this.authConfigService.authConfig.jwtExpiresIn) * 60 * 60,
+        parseInt(this.authConfigService.authConfig.jwtExpiresIn) * 60,
         await this.generateAccessToken(userAuth),
         await this.generateRefreshToken(userAuth),
       );
@@ -75,7 +75,7 @@ export class AuthService {
     });
     return new RefreshResponseDto(
       'Bearer',
-      parseInt(this.authConfigService.authConfig.jwtExpiresIn) * 60 * 60,
+      parseInt(this.authConfigService.authConfig.jwtExpiresIn) * 60,
       await this.generateAccessToken(userAuth),
       await this.generateRefreshToken(userAuth),
     );

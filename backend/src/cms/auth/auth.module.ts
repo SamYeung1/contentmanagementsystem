@@ -14,7 +14,7 @@ import * as fs from 'fs';
       signOptions: {
         algorithm: 'RS256',
         issuer: 'content_management_system',
-        expiresIn: configService.authConfig.jwtExpiresIn + 'h',
+        expiresIn: configService.authConfig.jwtExpiresIn + 'm',
       },
     }),
   })],

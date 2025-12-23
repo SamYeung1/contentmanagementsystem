@@ -17,17 +17,17 @@ export class UserAuthEntity {
     Object.assign(this, params);
   }
 
-  @PrimaryColumn({ generated: 'uuid', name: 'token_id' })
+  @PrimaryColumn({ generated: 'uuid'})
   tokenId: string;
   @ManyToOne((type) => UserEntity)
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: UserEntity;
-  @Column({ type: 'timestamp', name: 'refresh_token_expired_at', nullable: false })
+  @Column({ type: 'timestamp', nullable: false })
   refreshTokenExpiredAt: Date;
   @Column({ type: 'enum', enum: AuthType })
   type: AuthType;
-  @Column({ type: 'timestamp', name: 'issue_at', nullable: false })
+  @Column({ type: 'timestamp', nullable: false })
   issueAt: Date;
-  @Column({ type: 'varchar', name: 'protected_ticket', nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   protectedTicket: string;
 }

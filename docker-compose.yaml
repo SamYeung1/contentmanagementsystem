@@ -26,5 +26,5 @@ services:
       DATABASE_DATABASE: cms
       AUTH_PRIVATE_KEY_PATH: '/usr/src/app/src/storage/auth-private.pem'
       AUTH_PUBLIC_KEY_PATH: '/usr/src/app/src/storage/auth-public.pem'
-      AUTH_PRIVATE_JWT_EXPIRES_IN: '1' #Hour
+      AUTH_PRIVATE_JWT_EXPIRES_IN: '30' #Min
       AUTH_REFRESH_TOKEN_IN: '1' #Month
