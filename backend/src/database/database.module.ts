@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { PermissionRepository, UserRepository } from './repositories';
+import { PermissionRepository, RoleRepository, UserRepository } from './repositories';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '../config/config.module';
 import { DatabaseConfigService } from '../config/database-config/database-config.service';
@@ -25,8 +25,8 @@ import { UserAuthRepository } from './repositories';
       }),
     }),
     TypeOrmModule.forFeature([UserEntity, UserAuthEntity,PermissionEntity, RoleEntity])],
-  providers: [UserRepository, UserAuthRepository,PermissionRepository],
-  exports: [UserRepository, UserAuthRepository,PermissionRepository],
+  providers: [UserRepository, UserAuthRepository,PermissionRepository,RoleRepository],
+  exports: [UserRepository, UserAuthRepository,PermissionRepository,RoleRepository],
 })
 export class DatabaseModule {
 }

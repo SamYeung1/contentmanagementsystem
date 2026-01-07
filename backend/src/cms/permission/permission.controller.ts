@@ -49,7 +49,7 @@ export class PermissionController {
   @Serialize(GetPermissionResponseDto)
   @Get(':id')
   async getPermission(@Param('id') id: string): Promise<GetPermissionResponseDto> {
-    return new GetPermissionResponseDto(await this.permissionService.getUser(id));
+    return new GetPermissionResponseDto(await this.permissionService.getPermission(id));
   }
 
   @Serialize(PagingResultDto<GetPermissionResponseDto>)

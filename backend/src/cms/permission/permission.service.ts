@@ -16,7 +16,7 @@ export class PermissionService {
 
   async updatePermission(id: string, permission: UpdatePermissionDto, currentUser: UserEntity): Promise<PermissionEntity> {
     if (!await this.permissionRepository.findById(parseInt(id))) {
-      throw new NotFoundException('User does not exist');
+      throw new NotFoundException('Permission does not exist');
     }
     return await this.permissionRepository.update(parseInt(id), new PermissionEntity({
       ...permission,
@@ -26,15 +26,15 @@ export class PermissionService {
 
   async deletePermission(id: string): Promise<boolean> {
     if (!await this.permissionRepository.findById(parseInt(id))) {
-      throw new NotFoundException('User does not exist');
+      throw new NotFoundException('Permission does not exist');
     }
     return this.permissionRepository.delete(parseInt(id));
   }
 
-  async getUser(id: string): Promise<PermissionEntity> {
+  async getPermission(id: string): Promise<PermissionEntity> {
     let permission: PermissionEntity = await this.permissionRepository.findById(parseInt(id));
     if (!permission) {
-      throw new NotFoundException('User does not exist');
+      throw new NotFoundException('Permission does not exist');
     }
     return permission;
   }

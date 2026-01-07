@@ -5,12 +5,14 @@ import { LoggerMiddleware } from './common/middleware';
 import { AuthModule } from './cms/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PermissionModule } from './cms/permission/permission.module';
+import { RoleModule } from './cms/role/role.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UserModule,
     AuthModule,
+    RoleModule,
     PermissionModule,
     ConfigModule.forRoot()
   ],

@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { PermissionEntity, UserEntity } from '../../../database/entities';
+import { PermissionEntity } from '../../../database/entities';
 import { GetUserResponseDto } from '../../user/dto';
 
 export class UpdatePermissionResponseDto {
