@@ -1,5 +1,5 @@
 import { CreatePermissionDto } from './create-permission.dto';
-import { OmitType } from '@nestjs/swagger';
+import { OmitType, PartialType } from '@nestjs/swagger';
 
-export class UpdatePermissionDto extends OmitType(CreatePermissionDto, ['email'] as const) {
+export class UpdatePermissionDto extends PartialType(CreatePermissionDto) {
 }

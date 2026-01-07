@@ -4,14 +4,14 @@ import { DatabaseModule } from './database/database.module';
 import { LoggerMiddleware } from './common/middleware';
 import { AuthModule } from './cms/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './common/guard';
+import { PermissionModule } from './cms/permission/permission.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UserModule,
     AuthModule,
+    PermissionModule,
     ConfigModule.forRoot()
   ],
   controllers: [],

@@ -19,12 +19,12 @@ export class UserRepository implements CrudInterface<number, UserEntity> {
     return (await this.repository.update(id, { isDeleted: true }))?.affected >= 1;
   }
 
-  update(id: number, input: Omit<UserEntity, 'id'>): Promise<UserEntity> {
-    const user: UserEntity = new UserEntity();
-    user.id = id;
+  async update(id: number, input: Omit<UserEntity, 'id'>): Promise<UserEntity> {
+    const user: UserEntity = await this.findById(id);
     user.name = input.name;
     user.email = input.email;
     user.password = input.password;
+    user.updatedBy = input.updatedBy;
     return this.repository.save(user);
   }
 

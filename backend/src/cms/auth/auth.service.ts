@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserAuthRepository } from '../../database/repositories/user-auth.repository';
+import { UserAuthRepository } from '../../database/repositories';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { verify } from 'argon2';

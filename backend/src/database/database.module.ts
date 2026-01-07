@@ -1,10 +1,10 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { UserRepository } from './repositories';
+import { PermissionRepository, UserRepository } from './repositories';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '../config/config.module';
 import { DatabaseConfigService } from '../config/database-config/database-config.service';
-import { UserAuthEntity, UserEntity } from './entities';
-import { UserAuthRepository } from './repositories/user-auth.repository';
+import { PermissionEntity, RoleEntity, UserAuthEntity, UserEntity } from './entities';
+import { UserAuthRepository } from './repositories';
 
 @Global()
 @Module({
@@ -18,15 +18,15 @@ import { UserAuthRepository } from './repositories/user-auth.repository';
         port: configService.databaseConfig.port,
         password: configService.databaseConfig.password,
         username: configService.databaseConfig.username,
-        entities: [UserEntity, UserAuthEntity],
+        entities: [UserEntity, UserAuthEntity, PermissionEntity, RoleEntity],
         database: configService.databaseConfig.database,
         synchronize: true,
         logging: true,
       }),
     }),
-    TypeOrmModule.forFeature([UserEntity, UserAuthEntity])],
-  providers: [UserRepository, UserAuthRepository],
-  exports: [UserRepository, UserAuthRepository],
+    TypeOrmModule.forFeature([UserEntity, UserAuthEntity,PermissionEntity, RoleEntity])],
+  providers: [UserRepository, UserAuthRepository,PermissionRepository],
+  exports: [UserRepository, UserAuthRepository,PermissionRepository],
 })
 export class DatabaseModule {
 }

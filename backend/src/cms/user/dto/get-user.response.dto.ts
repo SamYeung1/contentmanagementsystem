@@ -9,8 +9,6 @@ export class GetUserResponseDto {
   @Expose()
   name: string;
   @Expose()
-  isDeleted: boolean;
-  @Expose()
   createdAt: Date;
   @Expose()
   updatedAt: Date;

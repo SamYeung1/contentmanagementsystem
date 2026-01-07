@@ -1,52 +1,52 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from '../../database/repositories';
-import { UserEntity } from '../../database/entities';
+import { PermissionEntity, UserEntity } from '../../database/entities';
 import { Ordering, Paging, PagingResult } from '../../common/type';
 import { DatabaseFilterUtil } from '../../common/util';
 import { CreatePermissionDto, UpdatePermissionDto } from './dto';
+import { PermissionRepository } from '../../database/repositories';
 
 @Injectable()
 export class PermissionService {
-  constructor(private readonly userRepository: UserRepository) {
+  constructor(private readonly permissionRepository: PermissionRepository) {
   }
 
-  async createUser(user: CreatePermissionDto, currentUser: UserEntity): Promise<UserEntity> {
-    return await this.userRepository.create(new UserEntity({ ...user,updatedBy: currentUser,createdBy:currentUser }));
+  async createPermission(permission: CreatePermissionDto, currentUser: UserEntity): Promise<PermissionEntity> {
+    return await this.permissionRepository.create(new PermissionEntity({ ...permission,updatedBy: currentUser,createdBy:currentUser }));
   }
 
-  async updateUser(id: string, user: UpdatePermissionDto, currentUser: UserEntity): Promise<UserEntity> {
-    if (!await this.userRepository.findById(parseInt(id))) {
+  async updatePermission(id: string, permission: UpdatePermissionDto, currentUser: UserEntity): Promise<PermissionEntity> {
+    if (!await this.permissionRepository.findById(parseInt(id))) {
       throw new NotFoundException('User does not exist');
     }
-    return await this.userRepository.update(parseInt(id), new UserEntity({
-      ...user,
+    return await this.permissionRepository.update(parseInt(id), new PermissionEntity({
+      ...permission,
       updatedBy: currentUser,
     }));
   }
 
-  async deleteUser(id: string): Promise<boolean> {
-    if (!await this.userRepository.findById(parseInt(id))) {
+  async deletePermission(id: string): Promise<boolean> {
+    if (!await this.permissionRepository.findById(parseInt(id))) {
       throw new NotFoundException('User does not exist');
     }
-    return this.userRepository.delete(parseInt(id));
+    return this.permissionRepository.delete(parseInt(id));
   }
 
-  async getUser(id: string): Promise<UserEntity> {
-    let user: UserEntity = await this.userRepository.findById(parseInt(id));
-    if (!user) {
+  async getUser(id: string): Promise<PermissionEntity> {
+    let permission: PermissionEntity = await this.permissionRepository.findById(parseInt(id));
+    if (!permission) {
       throw new NotFoundException('User does not exist');
     }
-    return user;
+    return permission;
   }
 
-  async findUsersByKeywordPaginate(like?: Record<keyof UserEntity, string>, paginate: Paging = {
+  async findUsersByKeywordPaginate(like?: Record<keyof PermissionEntity, string>, paginate: Paging = {
     page: 1,
     limit: 10,
-  }, orderBy: Ordering<UserEntity> = { id: 'asc' }): Promise<PagingResult<UserEntity>> {
+  }, orderBy: Ordering<PermissionEntity> = { id: 'asc' }): Promise<PagingResult<PermissionEntity>> {
     let where = {};
     if (like) {
-      where = DatabaseFilterUtil.createLikeFilter<UserEntity>(like);
+      where = DatabaseFilterUtil.createLikeFilter<PermissionEntity>(like);
     }
-    return this.userRepository.findByWithPagination({ ...where, isDeleted: false }, orderBy, paginate);
+    return this.permissionRepository.findByWithPagination({ ...where, isDeleted: false }, orderBy, paginate);
   }
 }
