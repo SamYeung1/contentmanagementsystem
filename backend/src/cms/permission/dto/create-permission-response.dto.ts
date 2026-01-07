@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { PermissionEntity, UserEntity } from '../../../database/entities';
-import { GetPermissionResponseDto } from './get-permission.response.dto';
+import { GetUserResponseDto } from '../../user/dto';
 
 export class CreatePermissionResponseDto {
   @Expose()
@@ -14,11 +14,11 @@ export class CreatePermissionResponseDto {
   @Expose()
   updatedAt: Date;
   @Expose()
-  @Type(() => GetPermissionResponseDto)
-  createdBy: GetPermissionResponseDto;
+  @Type(() => GetUserResponseDto)
+  createdBy: GetUserResponseDto;
   @Expose()
-  @Type(() => GetPermissionResponseDto)
-  updatedBy: GetPermissionResponseDto;
+  @Type(() => GetUserResponseDto)
+  updatedBy: GetUserResponseDto;
 
   constructor(params?: Partial<PermissionEntity>) {
     Object.assign(this, params);
