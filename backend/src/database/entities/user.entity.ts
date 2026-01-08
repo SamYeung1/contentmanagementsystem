@@ -25,6 +25,8 @@ export class UserEntity extends CmsBaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   password: string;
+  @Column({type:'boolean', nullable:false,default:false})
+  isRootUser:boolean;
   @JoinTable()
   @ManyToMany((type)=>RoleEntity)
   roles: RoleEntity[];

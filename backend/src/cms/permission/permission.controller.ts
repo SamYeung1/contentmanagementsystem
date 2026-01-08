@@ -19,7 +19,9 @@ import { PagingResultDto } from '../../common/dto';
 import { Filter } from 'typeorm';
 import { PermissionEntity, UserEntity } from '../../database/entities';
 import { CurrentUser, Public } from '../../common/decorator';
+import { Role } from '../../common/decorator/role.decorator';
 
+@Role("permission")
 @Controller('permissions')
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {

@@ -19,7 +19,9 @@ import { Filter } from 'typeorm';
 import { RoleEntity, UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
 import { RoleService } from './role.service';
+import { Role } from '../../common/decorator/role.decorator';
 
+@Role("role")
 @Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {

@@ -19,7 +19,9 @@ import { PagingResultDto } from '../../common/dto';
 import { Filter } from 'typeorm';
 import { UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
+import { Role } from '../../common/decorator/role.decorator';
 
+@Role("user")
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {

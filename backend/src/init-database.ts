@@ -10,6 +10,7 @@ AppDataSource.initialize().then(async () => {
       email: 'admin@gmail.com',
       password: '123456',
       name: 'admin',
+      isRootUser: true,
     }));
   }
   console.log('Here you can setup and run express / fastify / any other framework.');
