@@ -6,9 +6,9 @@ Framework: NextJS, NestJS
 # Plan
 
 - Backend - CMS API
-    - [ ] Auth
-    - [ ] User
-    - [ ] Role And Permission
+    - [x] Auth
+    - [x] User
+    - [x] Role And Permission
     - [ ] Menu
     - [ ] Setting
 - Backend - API
