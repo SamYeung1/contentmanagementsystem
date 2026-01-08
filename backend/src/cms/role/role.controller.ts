@@ -17,12 +17,10 @@ import { Ordering, Paging, PagingResult } from '../../common/type';
 import { PagingResultDto } from '../../common/dto';
 import { Filter } from 'typeorm';
 import { RoleEntity, UserEntity } from '../../database/entities';
-import { AuthGuard } from '../../common/guard';
 import { CurrentUser } from '../../common/decorator';
 import { RoleService } from './role.service';
 
 @Controller('roles')
-@UseGuards(AuthGuard)
 export class RoleController {
   constructor(private readonly roleService: RoleService) {
   }

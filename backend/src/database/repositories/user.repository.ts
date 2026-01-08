@@ -25,18 +25,19 @@ export class UserRepository implements CrudInterface<number, UserEntity> {
     user.email = input.email;
     user.password = input.password;
     user.updatedBy = input.updatedBy;
+    user.roles = input.roles;
     return this.repository.save(user);
   }
 
   findById(id: number): Promise<UserEntity | null> {
     return this.repository.findOne({
       where: { id: id, isDeleted: false },
-      relations: { createdBy: true, updatedBy: true },
+      relations: { createdBy: true, updatedBy: true, roles: true },
     });
   }
 
   findBy(filter: FindOptionsWhere<UserEntity>, orderBy: FindOptionsOrder<UserEntity>): Promise<UserEntity[]> {
-    const relations: FindOptionsRelations<UserEntity> = { createdBy: true, updatedBy: true };
+    const relations: FindOptionsRelations<UserEntity> = { createdBy: true, updatedBy: true, roles: true  };
     const where: FindOptionsWhere<UserEntity> = { ...filter, isDeleted: false };
     return this.repository.find({
       where: where,
@@ -46,7 +47,7 @@ export class UserRepository implements CrudInterface<number, UserEntity> {
   }
 
   async findByWithPagination(filter: FindOptionsWhere<UserEntity>, orderBy: FindOptionsOrder<UserEntity>, paginate: Paging): Promise<PagingResult<UserEntity>> {
-    const relations: FindOptionsRelations<UserEntity> = { createdBy: true, updatedBy: true };
+    const relations: FindOptionsRelations<UserEntity> = { createdBy: true, updatedBy: true , roles: true };
     const where: FindOptionsWhere<UserEntity> = { ...filter, isDeleted: false };
     const [data, total] = await this.repository.findAndCount({
       where: where,
@@ -61,7 +62,7 @@ export class UserRepository implements CrudInterface<number, UserEntity> {
   findByEmail(email: string): Promise<UserEntity | null> {
     return this.repository.findOne({
       where: { email: email, isDeleted: false },
-      relations: { createdBy: true, updatedBy: true },
+      relations: { createdBy: true, updatedBy: true, roles: true  },
     });
   }
 

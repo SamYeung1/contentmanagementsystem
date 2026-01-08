@@ -18,11 +18,9 @@ import { Ordering, Paging, PagingResult } from '../../common/type';
 import { PagingResultDto } from '../../common/dto';
 import { Filter } from 'typeorm';
 import { PermissionEntity, UserEntity } from '../../database/entities';
-import { AuthGuard } from '../../common/guard';
-import { CurrentUser } from '../../common/decorator';
+import { CurrentUser, Public } from '../../common/decorator';
 
 @Controller('permissions')
-@UseGuards(AuthGuard)
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {
   }

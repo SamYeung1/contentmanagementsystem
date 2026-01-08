@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { UserEntity } from '../../../database/entities';
-import { GetUserResponseDto } from './get-user.response.dto';
+import { GetRoleResponseDto } from '../../role/dto';
+import { GetAuthorResponseDto } from '../../../common/dto';
 
 export class CreateUserResponseDto {
   @Expose()
@@ -10,16 +11,18 @@ export class CreateUserResponseDto {
   @Expose()
   name: string;
   @Expose()
+  @Type(() => GetRoleResponseDto)
+  roles: GetRoleResponseDto[];
+  @Expose()
   createdAt: Date;
   @Expose()
   updatedAt: Date;
   @Expose()
-  @Type(() => GetUserResponseDto)
-  createdBy: GetUserResponseDto;
+  @Type(() => GetAuthorResponseDto)
+  createdBy: GetAuthorResponseDto;
   @Expose()
-  @Type(() => GetUserResponseDto)
-  updatedBy: GetUserResponseDto;
-
+  @Type(() => GetAuthorResponseDto)
+  updatedBy: GetAuthorResponseDto;
   constructor(params?: Partial<UserEntity>) {
     Object.assign(this, params);
   }

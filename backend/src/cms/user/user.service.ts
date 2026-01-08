@@ -1,27 +1,35 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from '../../database/repositories';
-import { UserEntity } from '../../database/entities';
+import { RoleRepository, UserRepository } from '../../database/repositories';
+import { PermissionEntity, RoleEntity, UserEntity } from '../../database/entities';
 import { Ordering, Paging, PagingResult } from '../../common/type';
 import { DatabaseFilterUtil } from '../../common/util';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {
+  constructor(private readonly userRepository: UserRepository,private readonly roleRepository: RoleRepository) {
   }
 
   async createUser(user: CreateUserDto, currentUser: UserEntity): Promise<UserEntity> {
-    return await this.userRepository.create(new UserEntity({ ...user,updatedBy: currentUser,createdBy:currentUser }));
+    const roles: RoleEntity[] = await this.roleRepository.findBy({ id: In(user.roles) }, {});
+    return await this.userRepository.create(new UserEntity({ ...user,roles:roles,updatedBy: currentUser,createdBy:currentUser }));
   }
 
   async updateUser(id: string, user: UpdateUserDto, currentUser: UserEntity): Promise<UserEntity> {
     if (!await this.userRepository.findById(parseInt(id))) {
       throw new NotFoundException('User does not exist');
     }
-    return await this.userRepository.update(parseInt(id), new UserEntity({
-      ...user,
+    const userEntity = new UserEntity({
+      name: user.name,
+      password:user.password,
       updatedBy: currentUser,
-    }));
+    });
+    if (user.roles) {
+      const roles: RoleEntity[] = await this.roleRepository.findBy({ id: In(user.roles) }, {});
+      userEntity.roles = roles;
+    }
+    return await this.userRepository.update(parseInt(id),userEntity);
   }
 
   async deleteUser(id: string): Promise<boolean> {

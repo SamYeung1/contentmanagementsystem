@@ -3,10 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthConfigService } from '../../config/database-config/auth-config.service';
 import * as fs from 'fs';
 import { UserRepository } from '../../database/repositories';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY, Public } from '../decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService, private readonly authConfigService: AuthConfigService,private readonly userRepository: UserRepository) {
+  constructor(private readonly reflector:Reflector,private readonly jwtService: JwtService, private readonly authConfigService: AuthConfigService,private readonly userRepository: UserRepository) {
   }
 
   async canActivate(
@@ -14,7 +16,11 @@ export class AuthGuard implements CanActivate {
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-
+    const isPublic = this.reflector.get<boolean>(
+      IS_PUBLIC_KEY,
+      context.getHandler(),
+    );
+    if(isPublic) return true;
     if (!token) {
       throw new UnauthorizedException();
     }

@@ -3,10 +3,11 @@ import {
   BeforeUpdate,
   Column,
   Entity,
-  JoinColumn, ManyToOne,
+  JoinColumn, JoinTable, ManyToMany, ManyToOne,
 } from 'typeorm';
 import { CmsBaseEntity } from './cms-base.entity';
 import { hash } from 'argon2';
+import { RoleEntity } from './role.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends CmsBaseEntity {
@@ -24,7 +25,9 @@ export class UserEntity extends CmsBaseEntity {
 
   @Column({ type: 'varchar', nullable: false })
   password: string;
-
+  @JoinTable()
+  @ManyToMany((type)=>RoleEntity)
+  roles: RoleEntity[];
   @ManyToOne((type) => UserEntity)
   @JoinColumn({ referencedColumnName: 'id' })
   createdBy: UserEntity;

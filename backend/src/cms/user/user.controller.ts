@@ -18,11 +18,9 @@ import { Ordering, Paging, PagingResult } from '../../common/type';
 import { PagingResultDto } from '../../common/dto';
 import { Filter } from 'typeorm';
 import { UserEntity } from '../../database/entities';
-import { AuthGuard } from '../../common/guard';
 import { CurrentUser } from '../../common/decorator';
 
 @Controller('users')
-@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {
   }
