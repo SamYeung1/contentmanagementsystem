@@ -1,14 +1,9 @@
-"use client";
-
-import { useAuth } from "@/context/auth-context";
 import { JSX } from 'react';
 
 export default function DashboardPage(): JSX.Element {
-  const { user } = useAuth();
 
   // Double check permission inside the page content
-  const canDelete = user?.permissions.includes("delete_content");
-
+  const canDelete = true
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

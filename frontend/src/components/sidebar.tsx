@@ -9,7 +9,8 @@ import { LogOut } from "lucide-react";
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-
+  console.log(user?.roles.flatMap((role)=>
+    role.permissions.flatMap((permission)=> permission.action)));
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-white">
       <div className="flex h-16 items-center border-b px-6">
@@ -19,7 +20,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {NAV_ITEMS.map((item) => {
           // 🔒 SECURITY: Hide item if user lacks permission
-          if (user && !user.permissions.includes(item.permission)) return null;
+          // if (user && !user.permissions.includes(item.permission)) return null;
 
           const isActive = pathname === item.href;
 

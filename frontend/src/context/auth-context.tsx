@@ -2,18 +2,19 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, MOCK_USERS } from '@/lib/mock-data';
+import { MOCK_USERS } from '@/lib/mock-data';
+import { UserResponse } from '@/type';
 
 interface AuthContextType {
-  user: User | null;
-  login: (email: string) => Promise<User>;
+  user: UserResponse | null;
+  login: (email: string) => Promise<UserResponse>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false); // Simulate loading
   const router = useRouter();
 
@@ -25,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = (email: string) => new Promise<User>((resolve, reject) => {
+  const login = (email: string) => new Promise<UserResponse>((resolve, reject) => {
     // Simulate API delay
     setTimeout(() => {
       const foundUser = MOCK_USERS.find((u) => u.email === email);
@@ -42,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('cms_user');
-    router.replace('/login');
+    router.replace('/');
   };
 
   return (

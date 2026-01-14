@@ -1,30 +1,25 @@
 import { HelperText, Label, TextInput, TextInputProps } from 'flowbite-react';
-import { Field, FieldProps } from 'formik';
 
 
 interface TextFieldProps extends TextInputProps {
   label: string;
   name: string;
+  errorMessage?: string;
 }
 
-export default function TextField({ icon, label, name, ...props }: TextFieldProps) {
-  return (<Field name={name}>
-    {({
-        field, // { name, value, onChange, onBlur }
-        meta,
-      }: FieldProps) => {
-      const isError = meta.touched && meta.error;
-      return <div>
-        <Label htmlFor={name}>{label}</Label>
-        <TextInput icon={icon} color={isError ? 'failure' : ''} {...props} {...field} />
-        {meta.touched && meta.error && (
-          <HelperText>
-            {meta.error}
-          </HelperText>
-        )}
-      </div>;
-    }}
-  </Field>);
+export default function TextField({errorMessage, icon, label, name, ...props }: TextFieldProps) {
+  {
+    return <div>
+      <Label htmlFor={name}>{label}</Label>
+      <TextInput name={name} icon={icon} color={errorMessage ? 'failure' : ''} {...props} />
+      {errorMessage && (
+        <HelperText color={"failure"}>
+          {errorMessage}
+        </HelperText>
+      )}
+    </div>;
+  }
+  ;
 }
 // const TextField: FC<TextFieldProps> = ({
 //                                          errorMessage,
