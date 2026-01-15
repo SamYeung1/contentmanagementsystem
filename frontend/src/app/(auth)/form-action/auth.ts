@@ -1,12 +1,12 @@
 'use server';
 import { z } from 'zod';
-import { login,AuthResponse } from '@/lib/cms-api/auth';
-import { getServerCookie, setServerCookie } from '@/lib/server-cookie';
-import { UserSession } from '@/type/user-session';
+import { login, LoginResponse } from '@/lib/cms-api/auth';
+import { setServerCookie } from '@/lib/server-cookie';
 import AuthException from '@/exception/api/auth-exception';
 import { getTranslations } from 'next-intl/server';
-import { decryptData, encryptData, Encryption } from '@/lib/encryption';
+import { encryptData, Encryption } from '@/lib/encryption';
 import * as fs from 'fs';
+import { redirect, RedirectType } from 'next/navigation';
 
 const schema = z.object({
   email: z.email('Invalid Email').nonempty('Required'),
@@ -42,10 +42,11 @@ export const actionLogin = async (initialState: any, formData: FormData): Promis
     };
   }
   try {
-    const auth: AuthResponse = await login({
+    const auth: LoginResponse = await login({
       email: validatedFields.data?.email,
       password: validatedFields.data?.password,
     });
+    auth.expires_in = Date.now() + (auth.expires_in * 1000);
     const encryptedData:Encryption = encryptData(JSON.stringify(auth));
     await setServerCookie<Encryption>('sid',encryptedData);
     return { serverError: { success: true, message: '' } };

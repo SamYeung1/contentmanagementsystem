@@ -3,40 +3,42 @@ import { cookies } from 'next/headers';
 import { getServerCookie } from '@/lib/server-cookie';
 import { UserResponse } from '@/type';
 import { decryptData, Encryption } from '@/lib/encryption';
-import { AuthResponse } from '@/lib/cms-api/auth';
+import { LoginResponse } from '@/lib/cms-api/auth';
 
-// 1. Specify protected and public routes
-const protectedRoutes = ['/dashboard', '/user'];
+// 1. Specify public routes
 const publicRoutes = ['/'];
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
-  const session = await getServerCookie<Encryption>('sid');
-  if (isProtectedRoute && !session) {
-    return NextResponse.redirect(new URL('/', req.nextUrl));
-  }
-  if (isProtectedRoute && session && !session.encryptedKey && !session.encryptedData && !session.authTag && !session.iv) {
-    return NextResponse.redirect(new URL('/', req.nextUrl));
-
-  }
   try {
-    let decodedSession = JSON.parse(decryptData(session!!.encryptedKey, session!!.iv, session!!.encryptedData, session!!.authTag)) as AuthResponse;
-
-  }catch(error) {
+    const session = await getServerCookie<Encryption>('sid');
+    if (!isPublicRoute && !session) {
+      return NextResponse.redirect(new URL('/', req.nextUrl));
+    }
+    const decodedSession: LoginResponse = JSON.parse(decryptData(session!!.encryptedKey, session!!.iv, session!!.encryptedData, session!!.authTag)) as LoginResponse;
+    if (!isPublicRoute && decodedSession.access_token) {
+      const expirationTimestamp = new Date(decodedSession.expires_in);
+      if(new Date().getTime() >= expirationTimestamp.getTime()) {
+          console.log("call refresh",new Date());
+      }
+      console.log("Current Time:", new Date(Date.now()));
+      console.log("Expires At:", new Date(expirationTimestamp));
+    }
+    if (
+      isPublicRoute &&
+      decodedSession.access_token &&
+      !req.nextUrl.pathname.startsWith('/dashboard')
+    ) {
+      return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
+    }
+  } catch (error) {
     console.error(error);
+    if (isPublicRoute) {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(new URL('/', req.nextUrl));
   }
-  // // 5. Redirect to /dashboard if the user is authenticated
-  // if (
-  //   isPublicRoute &&
-  //   session?.id &&
-  //   !req.nextUrl.pathname.startsWith('/dashboard')
-  // ) {
-  //   return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
-  // }
-
   return NextResponse.next();
 }
 
