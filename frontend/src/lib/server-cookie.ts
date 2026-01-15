@@ -20,7 +20,7 @@ export async function getServerCookie<T>(key:string): Promise<T | null> {
   return JSON.parse(cookie) as T;
 }
 
-export async function deleteSession(key:string) {
+export async function deleteServerCookie(key:string) {
   const session = await cookies();
   session.delete(key);
 }

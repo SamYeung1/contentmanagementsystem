@@ -30,11 +30,14 @@ export async function login(input: LoginRequest): Promise<LoginResponse> {
   if (res.status === 401) {
     throw new AuthException();
   }
-  const user = await res.json();
-  if (!user) {
+  const auth = await res.json();
+
+  if (!auth) {
     throw new AuthException();
   }
-  return user as LoginResponse;
+  const bufferTime = 2 * 60 // 2 mins
+  auth.expires_in = Date.now() + ((auth.expires_in - bufferTime) * 1000);
+  return auth as LoginResponse;
 }
 
 export async function refresh(input: RefreshRequest): Promise<LoginResponse> {
@@ -51,9 +54,11 @@ export async function refresh(input: RefreshRequest): Promise<LoginResponse> {
   if (res.status === 401) {
     throw new AuthException();
   }
-  const user = await res.json();
-  if (!user) {
+  const auth = await res.json();
+  if (!auth) {
     throw new AuthException();
   }
-  return user as LoginResponse;
+  const bufferTime = 2 * 60 // 2 mins
+  auth.expires_in = Date.now() + ((auth.expires_in - bufferTime) * 1000);
+  return auth as LoginResponse;
 }

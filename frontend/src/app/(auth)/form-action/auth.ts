@@ -6,7 +6,6 @@ import AuthException from '@/exception/api/auth-exception';
 import { getTranslations } from 'next-intl/server';
 import { encryptData, Encryption } from '@/lib/encryption';
 import * as fs from 'fs';
-import { redirect, RedirectType } from 'next/navigation';
 
 const schema = z.object({
   email: z.email('Invalid Email').nonempty('Required'),
@@ -46,7 +45,6 @@ export const actionLogin = async (initialState: any, formData: FormData): Promis
       email: validatedFields.data?.email,
       password: validatedFields.data?.password,
     });
-    auth.expires_in = Date.now() + (auth.expires_in * 1000);
     const encryptedData:Encryption = encryptData(JSON.stringify(auth));
     await setServerCookie<Encryption>('sid',encryptedData);
     return { serverError: { success: true, message: '' } };
