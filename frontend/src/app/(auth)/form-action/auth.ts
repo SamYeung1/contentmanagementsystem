@@ -4,12 +4,12 @@ import { login } from '@/lib/cms-api/auth';
 import { setSession } from '@/lib/session';
 import { UserSession } from '@/type/user-session';
 import AuthException from '@/exception/api/auth-exception';
-
+import {getTranslations} from 'next-intl/server';
 const schema = z.object({
   email: z.email('Invalid Email').nonempty('Required'),
   password: z.string().nonempty('Required'),
 });
-
+const t = await getTranslations('LoginPage');
 export interface LoginSubmitData {
   errors?: any,
   initValue?: {
@@ -42,7 +42,7 @@ export const actionLogin = async (initialState: any, formData: FormData): Promis
     return { serverError: { success: true, message: '' } };
   } catch (error) {
     if (error instanceof AuthException) {
-      return { serverError: { success: false, message: error.message } };
+      return { serverError: { success: false, message: t("auth_error") } };
     }
     console.error(error);
   }

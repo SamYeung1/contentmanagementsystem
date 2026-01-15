@@ -6,9 +6,11 @@ import TextField from '@/components/forms/fields/text-field';
 import { actionLogin, LoginSubmitData } from '@/app/(auth)/form-action/auth';
 import { useActionState } from 'react';
 import { InfoIcon } from 'lucide-react';
+import { useTranslations } from 'use-intl';
 
 
 export default function LoginPage() {
+  const t = useTranslations('LoginPage');
   const initialValues: LoginSubmitData = {
     initValue: {
       password: '',
@@ -19,7 +21,7 @@ export default function LoginPage() {
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <Card className="min-w-sm">
-        <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">Admin Portal</h1>
+        <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">{t("title")}</h1>
         {state.serverError?.message && <Alert color="failure" icon={InfoIcon}>
           <span className="font-medium">{state.serverError?.message}</span>
         </Alert>}
