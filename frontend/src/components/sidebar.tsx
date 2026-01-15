@@ -44,14 +44,14 @@ export function Sidebar() {
       {/* User Profile Section */}
       <div className="border-t p-4">
         <div className="flex items-center gap-3">
-          <img
-            src={user?.avatar}
-            alt="User"
-            className="h-9 w-9 rounded-full bg-gray-200"
-          />
+          {/*<img*/}
+          {/*  src={user?.avatar}*/}
+          {/*  alt="User"*/}
+          {/*  className="h-9 w-9 rounded-full bg-gray-200"*/}
+          {/*/>*/}
           <div className="flex-1 overflow-hidden">
             <p className="truncate text-sm font-medium text-gray-900">{user?.name}</p>
-            <p className="truncate text-xs text-gray-500 capitalize">{user?.role}</p>
+            {/*<p className="truncate text-xs text-gray-500 capitalize">{user?.role}</p>*/}
           </div>
           <button onClick={logout} className="text-gray-500 hover:text-red-600">
             <LogOut className="h-5 w-5" />

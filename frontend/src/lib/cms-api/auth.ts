@@ -1,5 +1,15 @@
-import { AuthRequest, AuthResponse } from '@/type/api/auth';
 import AuthException from '@/exception/api/auth-exception';
+export interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  token_type: string;
+}
+
+export interface AuthRequest {
+  email: string;
+  password: string;
+}
 
 export async function login(input: AuthRequest):Promise<AuthResponse>{
     const res = await fetch(
