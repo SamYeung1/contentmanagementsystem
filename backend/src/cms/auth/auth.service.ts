@@ -26,7 +26,9 @@ const CRYPTO_LENGTH = 24;
 export class AuthService {
   private readonly privateKey: string;
   private readonly publicKey: string;
-
+  private generateProtectedToken():string {
+    return Buffer.from(crypto.randomBytes(CRYPTO_LENGTH)).toString('hex');
+  }
   constructor(private readonly userAuthRepository: UserAuthRepository,
               private readonly userRepository: UserRepository,
               private readonly authConfigService: AuthConfigService,
@@ -44,7 +46,7 @@ export class AuthService {
         refreshTokenExpiredAt: utc().add(this.authConfigService.authConfig.refreshTokenExpiresIn, 'month').toDate(),
         type: AuthType.CMS,
         issueAt: utc().toDate(),
-        protectedTicket: Buffer.from(crypto.randomBytes(CRYPTO_LENGTH)).toString('hex'),
+        protectedTicket:this.generateProtectedToken(),
       }));
       return new LoginResponseDto(
         'Bearer',
@@ -69,10 +71,9 @@ export class AuthService {
     if(decryptedToken.protectedTicket !== userAuth.protectedTicket || utc().isAfter(userAuth.refreshTokenExpiredAt)) {
       throw new AuthErrorException();
     }
-    await this.userAuthRepository.update(userAuth.tokenId, {
-      refreshTokenExpiredAt: utc().add(this.authConfigService.authConfig.refreshTokenExpiresIn, 'month').toDate(),
-      protectedTicket: Buffer.from(crypto.randomBytes(CRYPTO_LENGTH)).toString('hex'),
-    });
+    userAuth.protectedTicket = this.generateProtectedToken();
+    userAuth.refreshTokenExpiredAt = utc().add(this.authConfigService.authConfig.refreshTokenExpiresIn, 'month').toDate();
+    await this.userAuthRepository.update(userAuth.tokenId, userAuth);
     return new RefreshResponseDto(
       'Bearer',
       parseInt(this.authConfigService.authConfig.jwtExpiresIn) * 60,
