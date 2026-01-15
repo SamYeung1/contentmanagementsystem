@@ -1,12 +1,13 @@
 'use server';
 import { z } from 'zod';
-import { login } from '@/lib/auth';
-import { UserResponse } from '@/type';
+import { login } from '@/lib/cms-api/auth';
 import { setSession } from '@/lib/session';
+import { UserSession } from '@/type/user-session';
+import AuthException from '@/exception/api/auth-exception';
 
 const schema = z.object({
-  email: z.email('Invalid Email').nonempty("Required"),
-  password: z.string().nonempty("Required"),
+  email: z.email('Invalid Email').nonempty('Required'),
+  password: z.string().nonempty('Required'),
 });
 
 export interface LoginSubmitData {
@@ -15,6 +16,10 @@ export interface LoginSubmitData {
     password: string;
     email: string;
   }
+  serverError?: {
+    success: boolean,
+    message: string
+  },
 }
 
 export const actionLogin = async (initialState: any, formData: FormData): Promise<LoginSubmitData> => {
@@ -27,9 +32,19 @@ export const actionLogin = async (initialState: any, formData: FormData): Promis
   if (!validatedFields.success) {
     return {
       errors: z.flattenError(validatedFields.error).fieldErrors,
+      serverError: { success: false, message: '' },
     };
   }
-  const user:UserResponse = await login(validatedFields.data?.email!!);
-  await setSession<UserResponse>(user);
-  return {};
+  try {
+    const user: any = await login({ email: validatedFields.data?.email, password: validatedFields.data?.password });
+    console.log(user);
+    // await setSession<UserSession>({token:user});
+    return { serverError: { success: true, message: '' } };
+  } catch (error) {
+    if (error instanceof AuthException) {
+      return { serverError: { success: false, message: error.message } };
+    }
+    console.error(error);
+  }
+  return { serverError: { success: false, message: '' } };
 };

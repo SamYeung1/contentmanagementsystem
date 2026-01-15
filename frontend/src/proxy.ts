@@ -8,7 +8,6 @@ const protectedRoutes = ['/dashboard','/user']
 const publicRoutes = ['/']
 
 export default async function proxy(req: NextRequest) {
-  console.log(req);
   const path = req.nextUrl.pathname
   const isProtectedRoute = protectedRoutes.includes(path)
   const isPublicRoute = publicRoutes.includes(path)
