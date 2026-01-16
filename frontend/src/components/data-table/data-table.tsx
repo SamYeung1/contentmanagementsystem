@@ -58,7 +58,6 @@ const paginationTheme: CustomFlowbiteTheme['pagination'] = {
 };
 export default function DataTable({
                                     data,
-                                    identifyKey,
                                     defaultSortKey,
                                     perPageTotal,
                                     serverMode,
