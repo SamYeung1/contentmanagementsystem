@@ -13,7 +13,13 @@ const DynamicIconRenderer = ({ name, ...props }: { name: string; [key: string]: 
   }
   return <LucideIcon {...props} />;
 };
-export default function CmsAside({isOpenMenu, navigationItems }: {isOpenMenu:boolean, navigationItems: NavigationItem[] }): JSX.Element {
+
+interface CmsAsideProps {
+  isOpenMenu: boolean;
+  navigationItems: NavigationItem[];
+}
+
+export default function CmsAside({ isOpenMenu, navigationItems }: CmsAsideProps): JSX.Element {
   const currentLanguage = useLocale();
   return <aside
     className={`fixed left-0 top-0 z-40 h-full pt-16 lg:pt-0 transition-transform lg:static lg:translate-x-0 ${
@@ -25,7 +31,7 @@ export default function CmsAside({isOpenMenu, navigationItems }: {isOpenMenu:boo
         <SidebarItems>
           <SidebarItemGroup>
             {navigationItems.sort((a, b) => a.sequence - b.sequence).map((item, index) => (item.children && item.children?.length > 0 ?
-                <SidebarCollapse key={`sidebar_item_navigation_${index}`}
+                <SidebarCollapse className={'cursor-pointer'} key={`sidebar_item_navigation_${index}`}
                                  icon={() => <DynamicIconRenderer name={item.icon} />}
                                  label={item.name.find((item) => item.lang === currentLanguage)?.title}>
                   {

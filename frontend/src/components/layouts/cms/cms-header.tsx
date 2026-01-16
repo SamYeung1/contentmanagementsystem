@@ -2,7 +2,13 @@ import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar
 import { LogOut, Menu, Settings, X } from 'lucide-react';
 import React, { JSX } from 'react';
 
-export default function CmsHeader({isOpenMenu, mobileButtonHandler }: {isOpenMenu:boolean, mobileButtonHandler: () => void }): JSX.Element {
+
+interface CmsHeaderProps {
+  isOpenMenu: boolean;
+  mobileButtonHandler: () => void;
+}
+
+export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeaderProps): JSX.Element {
   return <header
     className="fixed top-0 z-50 w-full">
     <Navbar fluid>
@@ -35,6 +41,7 @@ export default function CmsHeader({isOpenMenu, mobileButtonHandler }: {isOpenMen
           inline
           label={
             <Avatar
+              className={'cursor-pointer'}
               alt="User settings"
               img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
               rounded

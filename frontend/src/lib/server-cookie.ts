@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 
 export async function setServerCookie<T>(key: string,input: T) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); //7 days
   const payload = JSON.stringify(input);
   const cookie = await cookies();
 

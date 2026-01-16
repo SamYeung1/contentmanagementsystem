@@ -4,10 +4,12 @@ import { NavigationItem } from '@/type/navigation-item';
 import CmsHeader from '@/components/layouts/cms/cms-header';
 import CmsAside from '@/components/layouts/cms/cms-aside';
 
-export default function CMSLayout({ navigationItems, children }: {
-  navigationItems: NavigationItem[],
-  children: React.ReactNode
-}) {
+interface CMSLayoutProps {
+  navigationItems: NavigationItem[];
+  children: React.ReactNode;
+}
+
+export default function CMSLayout({ navigationItems, children }: CMSLayoutProps) {
   const [isOpen, setIsOpen] = useState(false);
   const closeSidebar = () => setIsOpen(false);
   const mobileButtonHandler = () => setIsOpen(!isOpen);
