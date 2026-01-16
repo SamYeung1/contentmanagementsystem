@@ -14,7 +14,10 @@ Framework: NextJS, NestJS
 - Backend - API
     - Planning
 - Frontend - CMS
-    - [ ] Auth
+    - [x] Auth
+      - [x] Refresh token handle
+      - [x] Session Encryption
+      - [ ] Permission 403 handle and UI handle
     - [ ] User
     - [ ] Role And Permission
     - [ ] Menu

@@ -1,9 +1,9 @@
-import { AuthProvider } from '@/context/auth-context';
 import './globals.css';
 import { ThemeModeScript } from 'flowbite-react';
 import { ThemeInit } from '../../.flowbite-react/init';
 import { NextIntlClientProvider } from 'next-intl';
 import { twMerge } from 'tailwind-merge';
+import React from 'react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <head><ThemeModeScript /></head>
     <body>
     <ThemeInit />
-    <NextIntlClientProvider><AuthProvider>{children}</AuthProvider></NextIntlClientProvider>
+    <NextIntlClientProvider>{children}</NextIntlClientProvider>
     </body>
     </html>
   );
