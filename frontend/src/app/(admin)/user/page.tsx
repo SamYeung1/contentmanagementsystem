@@ -3,29 +3,30 @@ import { JSX, useState } from 'react';
 import DataTable from '@/components/data-table/data-table';
 import { HeadCellItem } from '@/components/data-table/type';
 
-export default function DashboardPage(): JSX.Element {
-  const data = [
-    { id: 1, name: 'Apple MacBook Pro 17', price: 2999, category: 'Laptop' },
-    { id: 2, name: 'Microsoft Surface Pro', price: 1999, category: 'Laptop PC' },
-    { id: 3, name: 'Magic Mouse 2', price: 99, category: 'Accessories' },
-    { id: 4, name: 'Apple Watch', price: 199, category: 'Watches' },
-    { id: 5, name: 'Apple iMac', price: 2999, category: 'Desktop' },
-    { id: 6, name: 'AirPods Max', price: 549, category: 'Headphones' },
-    { id: 7, name: 'iPad Air', price: 599, category: 'Tablet' },
-    { id: 8, name: 'HomePod Mini', price: 99, category: 'Smart Home' },
-  ];
-  const dataTableHeader: HeadCellItem[] = [
-    { label: 'Id', key: 'id' },
-    { label: 'Name', key: 'name' },
-    { label: 'Price', key: 'price' },
-    { label: 'Category', key: 'category' },
-    {
-      label: 'Action', key: 'action', sortable: false, render: ({ item }: { item: any }) => {
-        return <label>{item.id}</label>;
-      },
+const data = [
+  { id: 1, name: 'Apple MacBook Pro 17', price: 2999, category: 'Laptop' },
+  { id: 2, name: 'Microsoft Surface Pro', price: 1999, category: 'Laptop PC' },
+  { id: 3, name: 'Magic Mouse 2', price: 99, category: 'Accessories' },
+  { id: 4, name: 'Apple Watch', price: 199, category: 'Watches' },
+  { id: 5, name: 'Apple iMac', price: 2999, category: 'Desktop' },
+  { id: 6, name: 'AirPods Max', price: 549, category: 'Headphones' },
+  { id: 7, name: 'iPad Air', price: 599, category: 'Tablet' },
+  { id: 8, name: 'HomePod Mini', price: 99, category: 'Smart Home' },
+];
+const HEADERS: HeadCellItem[] = [
+  { label: 'Id', key: 'id' },
+  { label: 'Name', key: 'name' },
+  { label: 'Price', key: 'price' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Action', key: 'action', sortable: false, render: ({ item }: { item: any }) => {
+      return <label>{item.id}</label>;
     },
-  ];
-  return <DataTable data={data} defaultSortKey={'id'} identifyKey={'id'} perPageTotal={3} header={dataTableHeader} />;
+  },
+];
+
+export default function DashboardPage(): JSX.Element {
+  return <DataTable data={data} defaultSortKey={'id'} identifyKey={'id'} perPageTotal={3} header={HEADERS} />;
   // // Double check permission inside the page content
   // const canDelete = true
   // return (

@@ -37,6 +37,7 @@ export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeader
       {/* Right Side: User Menu */}
       <div className="flex md:order-2">
         <Dropdown
+          id="user-menu-dropdown"
           arrowIcon={false}
           inline
           label={

@@ -1,8 +1,8 @@
 import {
-  Column,
+  Column, CreateDateColumn,
   Entity, Index,
   JoinColumn, ManyToOne,
-  PrimaryColumn,
+  PrimaryColumn, UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
@@ -30,4 +30,8 @@ export class UserAuthEntity {
   issueAt: Date;
   @Column({ type: 'varchar', nullable: false })
   protectedTicket: string;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt?: Date;
+  @UpdateDateColumn({ type: 'timestamp'})
+  updatedAt?: Date;
 }
