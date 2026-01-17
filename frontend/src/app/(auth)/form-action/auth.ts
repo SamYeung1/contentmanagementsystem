@@ -1,11 +1,8 @@
 'use server';
 import { z } from 'zod';
 import { login, LoginResponse } from '@/lib/cms-api/auth';
-import { setServerCookie } from '@/lib/server-cookie';
 import AuthException from '@/exception/api/auth-exception';
 import { getTranslations } from 'next-intl/server';
-import { encryptData, Encryption } from '@/lib/encryption';
-import * as fs from 'fs';
 import { storeSession } from '@/lib/user-session';
 
 const schema = z.object({
@@ -27,8 +24,6 @@ export interface LoginSubmitData {
 }
 
 export const actionLogin = async (initialState: any, formData: FormData): Promise<LoginSubmitData> => {
-  const publicKey = fs.readFileSync(process.env.PUBLIC_KEY_PATH!!, 'utf-8');
-  const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH!!, 'utf-8');
   const validatedFields = schema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),

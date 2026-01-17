@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell, Spinner,
 } from 'flowbite-react';
-import { useState, useMemo, JSX, memo, useRef, useCallback } from 'react';
+import { useState, useMemo, JSX, memo, useCallback } from 'react';
 import { ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { CustomFlowbiteTheme } from 'flowbite-react/types';
 import { HeadCellItem } from '@/components/data-table/type';
