@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerCookie, setServerCookie, deleteServerCookie } from '@/lib/server-cookie';
-import { decryptData, encryptData, Encryption } from '@/lib/encryption';
 import { LoginResponse } from '@/lib/cms-api/auth';
 import { refresh } from '@/lib/cms-api/auth';
+import { getSession, storeSession, decryptCurrentUserSession,deleteSession } from '@/lib/user-session';
 
 // 1. Specify public routes
 const publicRoutes = ['/'];
@@ -11,21 +10,21 @@ export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isPublicRoute = publicRoutes.includes(path);
   try {
-    const session = await getServerCookie<Encryption>('sid');
+    const session = await getSession();
     if (isPublicRoute && !session) {
       return NextResponse.next();
     }
     if (!isPublicRoute && !session) {
       return NextResponse.redirect(new URL('/', req.nextUrl));
     }
-    const decodedSession: LoginResponse = JSON.parse(decryptData(session!!.encryptedKey, session!!.iv, session!!.encryptedData, session!!.authTag)) as LoginResponse;
+
+    const decodedSession: LoginResponse = decryptCurrentUserSession(session);
     if (!isPublicRoute && decodedSession.access_token) {
       const expirationTimestamp = new Date(decodedSession.expires_in);
       if (new Date().getTime() >= expirationTimestamp.getTime()) {
         const refreshResult = await refresh({ refresh_token: decodedSession.refresh_token });
         if (refreshResult) {
-          const encryptedData: Encryption = encryptData(JSON.stringify(refreshResult));
-          await setServerCookie<Encryption>('sid', encryptedData);
+          await storeSession<LoginResponse>(refreshResult);
         }
       }
     }
@@ -41,7 +40,7 @@ export default async function proxy(req: NextRequest) {
     if (isPublicRoute) {
       return NextResponse.next();
     }
-    await deleteServerCookie('sid');
+    await deleteSession();
     return NextResponse.redirect(new URL('/', req.nextUrl));
   }
   return NextResponse.next();

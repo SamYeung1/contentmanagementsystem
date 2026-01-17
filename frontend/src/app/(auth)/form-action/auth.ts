@@ -6,6 +6,7 @@ import AuthException from '@/exception/api/auth-exception';
 import { getTranslations } from 'next-intl/server';
 import { encryptData, Encryption } from '@/lib/encryption';
 import * as fs from 'fs';
+import { storeSession } from '@/lib/user-session';
 
 const schema = z.object({
   email: z.email('Invalid Email').nonempty('Required'),
@@ -45,8 +46,7 @@ export const actionLogin = async (initialState: any, formData: FormData): Promis
       email: validatedFields.data?.email,
       password: validatedFields.data?.password,
     });
-    const encryptedData:Encryption = encryptData(JSON.stringify(auth));
-    await setServerCookie<Encryption>('sid',encryptedData);
+    await storeSession<LoginResponse>(auth);
     return { serverError: { success: true, message: '' } };
   } catch (error) {
     if (error instanceof AuthException) {

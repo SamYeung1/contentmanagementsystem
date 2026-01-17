@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import fs from 'fs';
+import { LoginResponse } from '@/lib/cms-api/auth';
 
 export interface Encryption {
   encryptedData: string,

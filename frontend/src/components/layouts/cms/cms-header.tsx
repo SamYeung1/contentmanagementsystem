@@ -1,3 +1,4 @@
+"use client"
 import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar, NavbarBrand } from 'flowbite-react';
 import { LogOut, Menu, Settings, X } from 'lucide-react';
 import React, { JSX } from 'react';

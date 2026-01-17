@@ -6,7 +6,7 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TableCell,
+  TableCell, Spinner,
 } from 'flowbite-react';
 import { useState, useMemo, JSX, memo, useRef, useCallback } from 'react';
 import { ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon } from 'lucide-react';
@@ -117,6 +117,7 @@ export default function DataTable({
     return sortableItems;
   }, [data, sortConfig]);
   const currentData = useMemo(() => {
+    if (serverMode) return data;
     const firstPageIndex = (currentPage - 1) * itemsPerPage;
     const lastPageIndex = firstPageIndex + itemsPerPage;
     return sortedData.slice(firstPageIndex, lastPageIndex);
@@ -149,6 +150,11 @@ export default function DataTable({
             </TableRow>
           </TableHead>
           <TableBody className="divide-y">
+            {serverMode && <TableRow>
+              <TableCell colSpan={header.length} className="text-center py-4">
+                <Spinner/>
+              </TableCell>
+            </TableRow>}
             {currentData.map((item, index) => (
               <TableRow key={`table_row_${index}`}>
                 {header.map((headerItem, headerIndex) => (
