@@ -3,12 +3,10 @@ import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar
 import { LogOut, Menu, Settings, X } from 'lucide-react';
 import React, { JSX } from 'react';
 
-
 interface CmsHeaderProps {
   isOpenMenu: boolean;
   mobileButtonHandler: () => void;
 }
-
 export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeaderProps): JSX.Element {
   return <header
     className="fixed top-0 z-50 w-full">

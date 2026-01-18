@@ -20,10 +20,10 @@ interface SortIconProps {
 interface DataTableProps {
   data: Record<string, any>[];
   header: HeadCellItem[];
-  identifyKey: string;
-  defaultSortKey: string;
+  defaultSort: SortableStatus;
   perPageTotal: number;
   serverMode?: boolean;
+  serverModePagination?: ServerModePagination;
 }
 
 interface SortableHeadCellProps {
@@ -35,9 +35,15 @@ interface SortableHeadCellProps {
   isActive: boolean;
 }
 
-interface SortableStatus {
+export interface SortableStatus {
   key: string;
-  direction: string;
+  direction: 'asc' | 'desc';
+}
+
+export interface ServerModePagination {
+  total: number;
+  isLoading: boolean;
+  onPageChanged: (currentPage: number) => void;
 }
 
 const SortIcon = ({ direction }: SortIconProps) => {
@@ -89,16 +95,14 @@ const paginationTheme: CustomFlowbiteTheme['pagination'] = {
 };
 export default function DataTable({
                                     data,
-                                    defaultSortKey,
+                                    defaultSort,
                                     perPageTotal,
                                     serverMode,
                                     header,
+                                    serverModePagination,
                                   }: DataTableProps): JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState<SortableStatus>({
-    key: defaultSortKey,
-    direction: 'asc',
-  });
+  const [sortConfig, setSortConfig] = useState<SortableStatus>(defaultSort);
   const itemsPerPage = perPageTotal;
   const sortedData = useMemo(() => {
     if (serverMode) return data;
@@ -123,14 +127,19 @@ export default function DataTable({
     return sortedData.slice(firstPageIndex, lastPageIndex);
   }, [currentPage, itemsPerPage, sortedData]);
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
+  const totalPages = serverMode ? Math.ceil((serverModePagination?.total ?? 0) / itemsPerPage) : Math.ceil(data.length / itemsPerPage);
   const requestSort = useCallback((key: string) => {
     setSortConfig((prev) => ({
       key,
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
     setCurrentPage(1);
+  }, []);
+  const pageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    if (serverMode) {
+      serverModePagination?.onPageChanged(page);
+    }
   }, []);
   return (
     <div>
@@ -150,9 +159,9 @@ export default function DataTable({
             </TableRow>
           </TableHead>
           <TableBody className="divide-y">
-            {serverMode && <TableRow>
+            {serverMode && serverModePagination?.isLoading && <TableRow>
               <TableCell colSpan={header.length} className="text-center py-4">
-                <Spinner/>
+                <Spinner />
               </TableCell>
             </TableRow>}
             {currentData.map((item, index) => (
@@ -164,7 +173,7 @@ export default function DataTable({
                 ))}
               </TableRow>
             ))}
-            {currentData.length === 0 && (
+            {((currentData.length === 0 && !serverMode) || (currentData.length === 0 && serverMode && !serverModePagination?.isLoading)) && (
               <TableRow>
                 <TableCell colSpan={header.length} className="text-center py-4">
                   No data found
@@ -177,15 +186,15 @@ export default function DataTable({
       <div className="flex items-center justify-between mt-2">
         <div className="text-sm text-gray-700 dark:text-gray-400">
           Showing <span className="font-semibold">{(currentPage - 1) * itemsPerPage + 1}</span> to <span
-          className="font-semibold">{Math.min(currentPage * itemsPerPage, data.length)}</span> of <span
-          className="font-semibold">{data.length}</span> Entries
+          className="font-semibold">{Math.min(currentPage * itemsPerPage, (serverMode ? totalPages : data.length))}</span> of <span
+          className="font-semibold">{serverMode ? totalPages : data.length}</span> Entries
         </div>
-        {currentData.length > 0 && <Pagination
+        {((!serverMode && currentData.length > 0) || (serverMode && totalPages > 0)) && <Pagination
           theme={paginationTheme}
           layout={'pagination'}
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={pageChange}
           showIcons
         />}
       </div>

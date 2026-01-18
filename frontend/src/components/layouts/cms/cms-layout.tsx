@@ -8,7 +8,6 @@ interface CMSLayoutProps {
   navigationItems: NavigationItem[];
   children: React.ReactNode;
 }
-
 export default function CMSLayout({ navigationItems, children }: CMSLayoutProps) {
   const [isOpen, setIsOpen] = useState(false);
   const closeSidebar = () => setIsOpen(false);

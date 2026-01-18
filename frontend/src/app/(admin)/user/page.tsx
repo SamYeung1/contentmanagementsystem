@@ -1,71 +1,73 @@
 'use client';
-import { JSX, useState } from 'react';
-import DataTable from '@/components/data-table/data-table';
+import { JSX, useEffect, useMemo, useState } from 'react';
+import DataTable, { ServerModePagination, SortableStatus } from '@/components/data-table/data-table';
 import { HeadCellItem } from '@/components/data-table/type';
+import { UserResponse } from '@/type';
+import PageResponse from '@/type/base/page-response';
+import { PAGINATION_OPTIONS } from '@/config/setting';
 
-const data = [
-  { id: 1, name: 'Apple MacBook Pro 17', price: 2999, category: 'Laptop' },
-  { id: 2, name: 'Microsoft Surface Pro', price: 1999, category: 'Laptop PC' },
-  { id: 3, name: 'Magic Mouse 2', price: 99, category: 'Accessories' },
-  { id: 4, name: 'Apple Watch', price: 199, category: 'Watches' },
-  { id: 5, name: 'Apple iMac', price: 2999, category: 'Desktop' },
-  { id: 6, name: 'AirPods Max', price: 549, category: 'Headphones' },
-  { id: 7, name: 'iPad Air', price: 599, category: 'Tablet' },
-  { id: 8, name: 'HomePod Mini', price: 99, category: 'Smart Home' },
-];
 const HEADERS: HeadCellItem[] = [
   { label: 'Id', key: 'id' },
+  { label: 'Email', key: 'email' },
   { label: 'Name', key: 'name' },
-  { label: 'Price', key: 'price' },
-  { label: 'Category', key: 'category' },
   {
-    label: 'Action', key: 'action', sortable: false, render: ({ item }: { item: any }) => {
+    label: 'Roles', key: 'roles', render: ({ item }: { item: UserResponse }) => {
+      return <label>{item.roles.map((item) => item.name)}</label>;
+    },
+  },
+  {
+    label: 'Action', key: 'action', sortable: false, render: ({ item }: { item: UserResponse }) => {
       return <label>{item.id}</label>;
     },
   },
 ];
 
-export default function DashboardPage(): JSX.Element {
-  return <DataTable data={data} defaultSortKey={'id'} identifyKey={'id'} perPageTotal={3} header={HEADERS} />;
-  // // Double check permission inside the page content
-  // const canDelete = true
-  // return (
-  //   <div className="space-y-6">
-  //     <div className="flex items-center justify-between">
-  //       <h1 className="text-2xl font-bold">User Management</h1>
-  //       <button className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-  //         Add User
-  //       </button>
-  //     </div>
-  //
-  //     <div className="rounded-lg border bg-white shadow-sm">
-  //       <table className="w-full text-left text-sm">
-  //         <thead className="bg-gray-50 text-gray-500">
-  //         <tr>
-  //           <th className="px-6 py-3 font-medium">Name</th>
-  //           <th className="px-6 py-3 font-medium">Role</th>
-  //           <th className="px-6 py-3 font-medium">Status</th>
-  //           <th className="px-6 py-3 font-medium text-right">Actions</th>
-  //         </tr>
-  //         </thead>
-  //         <tbody className="divide-y divide-gray-100">
-  //         {/* Mock Row */}
-  //         <tr className="hover:bg-gray-50">
-  //           <td className="px-6 py-4 font-medium">John Doe</td>
-  //           <td className="px-6 py-4">Editor</td>
-  //           <td className="px-6 py-4 text-green-600">Active</td>
-  //           <td className="px-6 py-4 text-right">
-  //             <button className="text-blue-600 hover:underline mr-3">Edit</button>
-  //
-  //             {/* 🔒 CONDITIONAL RENDER: Only Admins see delete */}
-  //             {canDelete && (
-  //               <button className="text-red-600 hover:underline">Delete</button>
-  //             )}
-  //           </td>
-  //         </tr>
-  //         </tbody>
-  //       </table>
-  //     </div>
-  //   </div>
-  // );
+function isUserPageResponse(data: any): data is PageResponse<UserResponse> {
+  return (
+    data &&
+    typeof data.total === 'number' &&
+    Array.isArray(data.results)
+  );
+}
+
+export default function UserPage(): JSX.Element {
+  const [pageData, setPageData] = useState<PageResponse<UserResponse>>({ total: 0, results: [] });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const serverModePagination: ServerModePagination = useMemo(() => ({
+    total: pageData.total,
+    isLoading: loading,
+    onPageChanged: (currentPage) => {
+      setPage(currentPage);
+    },
+  }), [pageData.total, loading]);
+  const limit = PAGINATION_OPTIONS.limit;
+  const defaultSort: SortableStatus = {
+    key: 'id',
+    direction: 'asc',
+  };
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`/api/user?page=${page}`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then((result) => {
+        if (isUserPageResponse(result)) {
+          setPageData(result);
+        } else {
+          console.error('Received unexpected data format:', result);
+        }
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.error('Fetch error:', error);
+        }
+      })
+      .finally(() => setLoading(false));
+    return () => controller.abort(); // Cleanup
+  }, [page]);
+  return <DataTable data={pageData.results} defaultSort={defaultSort} perPageTotal={limit} header={HEADERS}
+                    serverMode={true} serverModePagination={serverModePagination} />;
 }
