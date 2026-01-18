@@ -190,8 +190,8 @@ export default function DataTable({
       <div className="flex items-center justify-between mt-2">
         <div className="text-sm text-gray-700 dark:text-gray-400">
           Showing <span className="font-semibold">{(currentPage - 1) * itemsPerPage + 1}</span> to <span
-          className="font-semibold">{Math.min(currentPage * itemsPerPage, (serverMode ? totalPages : data.length))}</span> of <span
-          className="font-semibold">{serverMode ? totalPages : data.length}</span> Entries
+          className="font-semibold">{Math.min(currentPage * itemsPerPage, (serverMode ?  serverModePagination?.total ?? 0 : data.length))}</span> of <span
+          className="font-semibold">{serverMode ? serverModePagination?.total ?? 0 : data.length}</span> Entries
         </div>
         {((!serverMode && currentData.length > 0) || (serverMode && totalPages > 0)) && <Pagination
           theme={paginationTheme}

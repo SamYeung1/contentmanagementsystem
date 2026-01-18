@@ -1,3 +1,3 @@
 export const PAGINATION_OPTIONS = {
-  limit:50
+  limit:100
 }
