@@ -14,12 +14,12 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto, CreateUserResponseDto, UpdateUserDto, UpdateUserResponseDto, GetUserResponseDto } from './dto';
 import { Serialize } from '../../common/interceptor';
-import { Ordering, Paging, PagingResult } from '../../common/type';
+import {  PagingResult } from '../../common/type';
 import { PagingResultDto } from '../../common/dto';
-import { Filter } from 'typeorm';
 import { UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
 import { Role } from '../../common/decorator/role.decorator';
+import { ListQueryDto } from '../../common/dto/list-query.dto';
 
 @Role("user")
 @Controller('users')
@@ -54,7 +54,8 @@ export class UserController {
 
   @Serialize(PagingResultDto<GetUserResponseDto>)
   @Get()
-  async listUsers(@Query('paginate') paginate: Paging, @Query('filter') filter?: Filter<UserEntity>, @Query('orderBy') orderBy?: Ordering<GetUserResponseDto>): Promise<PagingResultDto<GetUserResponseDto>> {
+  async listUsers(@Query() query: ListQueryDto<UserEntity,GetUserResponseDto>): Promise<PagingResultDto<GetUserResponseDto>> {
+    const { paginate, filter, orderBy } = query;
     const result: PagingResult<UserEntity> = await this.userService.findUsersByKeywordPaginate(filter?.like, paginate, orderBy);
     return new PagingResultDto<GetUserResponseDto>(result.total, result.result.map((item) => new GetUserResponseDto(item)));
   }

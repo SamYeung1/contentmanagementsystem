@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateRoleDto, CreateRoleResponseDto, UpdateRoleDto, UpdateRoleResponseDto, GetRoleResponseDto } from './dto';
 import { Serialize } from '../../common/interceptor';
@@ -20,6 +19,7 @@ import { RoleEntity, UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
 import { RoleService } from './role.service';
 import { Role } from '../../common/decorator/role.decorator';
+import { ListQueryDto } from '../../common/dto/list-query.dto';
 
 @Role("role")
 @Controller('roles')
@@ -54,7 +54,8 @@ export class RoleController {
 
   @Serialize(PagingResultDto<GetRoleResponseDto>)
   @Get()
-  async listRoles(@Query('paginate') paginate: Paging, @Query('filter') filter?: Filter<UserEntity>, @Query('orderBy') orderBy?: Ordering<GetRoleResponseDto>): Promise<PagingResultDto<GetRoleResponseDto>> {
+  async listRoles(@Query() query: ListQueryDto<RoleEntity, GetRoleResponseDto>): Promise<PagingResultDto<GetRoleResponseDto>> {
+    const { paginate, filter, orderBy } = query;
     const result: PagingResult<RoleEntity> = await this.roleService.findUsersByKeywordPaginate(filter?.like, paginate, orderBy);
     return new PagingResultDto<GetRoleResponseDto>(result.total, result.result.map((item) => new GetRoleResponseDto(item)));
   }
