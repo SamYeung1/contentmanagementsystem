@@ -2,11 +2,14 @@
 import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar, NavbarBrand } from 'flowbite-react';
 import { LogOut, Menu, Settings, X } from 'lucide-react';
 import React, { JSX } from 'react';
+import ClientOnly from '@/components/ClientOnly';
+
 
 interface CmsHeaderProps {
   isOpenMenu: boolean;
   mobileButtonHandler: () => void;
 }
+
 export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeaderProps): JSX.Element {
   return <header
     className="fixed top-0 z-50 w-full">
@@ -35,27 +38,29 @@ export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeader
 
       {/* Right Side: User Menu */}
       <div className="flex md:order-2">
-        <Dropdown
-          id="user-menu-dropdown"
-          arrowIcon={false}
-          inline
-          label={
-            <Avatar
-              className={'cursor-pointer'}
-              alt="User settings"
-              img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-              rounded
-            />
-          }
-        >
-          <DropdownHeader>
-            <span className="block text-sm">Neil Sims</span>
-            <span className="block truncate text-sm font-medium">neil.sims@flowbite.com</span>
-          </DropdownHeader>
-          <DropdownItem icon={Settings}>Settings</DropdownItem>
-          <DropdownDivider />
-          <DropdownItem icon={LogOut}>Sign out</DropdownItem>
-        </Dropdown>
+        <ClientOnly>
+          <Dropdown
+            id="user-menu-dropdown"
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar
+                className={'cursor-pointer'}
+                alt="User settings"
+                img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                rounded
+              />
+            }
+          >
+            <DropdownHeader>
+              <span className="block text-sm">Neil Sims</span>
+              <span className="block truncate text-sm font-medium">neil.sims@flowbite.com</span>
+            </DropdownHeader>
+            <DropdownItem icon={Settings}>Settings</DropdownItem>
+            <DropdownDivider />
+            <DropdownItem icon={LogOut}>Sign out</DropdownItem>
+          </Dropdown>
+        </ClientOnly>
       </div>
     </Navbar>
   </header>;

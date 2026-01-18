@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell, Spinner,
 } from 'flowbite-react';
-import { useState, useMemo, JSX, memo, useCallback } from 'react';
+import { useState, useMemo, JSX, memo, useCallback, useEffect } from 'react';
 import { ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { CustomFlowbiteTheme } from 'flowbite-react/types';
 import { HeadCellItem } from '@/components/data-table/type';
@@ -37,13 +37,14 @@ interface SortableHeadCellProps {
 
 export interface SortableStatus {
   key: string;
-  direction: 'asc' | 'desc';
+  direction: 'ASC' | 'DESC';
 }
 
 export interface ServerModePagination {
   total: number;
   isLoading: boolean;
   onPageChanged: (currentPage: number) => void;
+  onSortClicked: (SortableStatus: SortableStatus) => void;
 }
 
 const SortIcon = ({ direction }: SortIconProps) => {
@@ -51,7 +52,7 @@ const SortIcon = ({ direction }: SortIconProps) => {
   if (!direction) return (
     <ChevronsUpDownIcon size={size} />
   );
-  return direction === 'asc' ? (
+  return direction === 'ASC' ? (
     <ChevronUpIcon size={size} />
   ) : (
     <ChevronDownIcon size={size} />
@@ -110,10 +111,10 @@ export default function DataTable({
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         if ((a as any)[sortConfig.key] < (b as any)[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
+          return sortConfig.direction === 'ASC' ? -1 : 1;
         }
         if ((a as any)[sortConfig.key] > (b as any)[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
+          return sortConfig.direction === 'ASC' ? 1 : -1;
         }
         return 0;
       });
@@ -131,7 +132,7 @@ export default function DataTable({
   const requestSort = useCallback((key: string) => {
     setSortConfig((prev) => ({
       key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+      direction: prev.key === key && prev.direction === 'ASC' ? 'DESC' : 'ASC',
     }));
     setCurrentPage(1);
   }, []);
@@ -141,6 +142,11 @@ export default function DataTable({
       serverModePagination?.onPageChanged(page);
     }
   }, []);
+  useEffect(() => {
+    if (serverMode) {
+      serverModePagination?.onSortClicked(sortConfig);
+    }
+  }, [sortConfig]); // Runs whenever sortConfig changes
   return (
     <div>
       <div className="overflow-x-auto shadow-md sm:rounded-lg">
@@ -159,20 +165,18 @@ export default function DataTable({
             </TableRow>
           </TableHead>
           <TableBody className="divide-y">
-            {serverMode && serverModePagination?.isLoading && <TableRow>
+            {serverMode && serverModePagination?.isLoading ? <TableRow>
               <TableCell colSpan={header.length} className="text-center py-4">
                 <Spinner />
               </TableCell>
-            </TableRow>}
-            {currentData.map((item, index) => (
+            </TableRow> : currentData.map((item, index) => (
               <TableRow key={`table_row_${index}`}>
                 {header.map((headerItem, headerIndex) => (
                   <TableCell key={`table_cell_${headerIndex}`}>{headerItem.render ?
                     <headerItem.render key={`table_cell_render_${headerIndex}`}
                                        item={item} /> : item[headerItem.key]}</TableCell>
                 ))}
-              </TableRow>
-            ))}
+              </TableRow>))}
             {((currentData.length === 0 && !serverMode) || (currentData.length === 0 && serverMode && !serverModePagination?.isLoading)) && (
               <TableRow>
                 <TableCell colSpan={header.length} className="text-center py-4">
