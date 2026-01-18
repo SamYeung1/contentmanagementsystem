@@ -12,9 +12,8 @@ import {
 } from '@nestjs/common';
 import { CreateRoleDto, CreateRoleResponseDto, UpdateRoleDto, UpdateRoleResponseDto, GetRoleResponseDto } from './dto';
 import { Serialize } from '../../common/interceptor';
-import { Ordering, Paging, PagingResult } from '../../common/type';
+import { PagingResult } from '../../common/type';
 import { PagingResultDto } from '../../common/dto';
-import { Filter } from 'typeorm';
 import { RoleEntity, UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
 import { RoleService } from './role.service';
