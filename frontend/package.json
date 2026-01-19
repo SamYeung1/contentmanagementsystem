@@ -1,6 +1,6 @@
 {
   "name": "cms",
-  "version": "1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "PORT=3001 node dist/server.js",
