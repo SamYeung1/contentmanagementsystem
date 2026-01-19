@@ -5,7 +5,7 @@ import { HelpCircle, icons } from 'lucide-react';
 import React, { JSX } from 'react';
 import { NavigationItem } from '@/type/navigation-item';
 import { useLocale } from 'use-intl';
-import ClientOnly from '@/components/ClientOnly';
+import ClientOnly from '@/components/client-only';
 
 const DynamicIconRenderer = ({ name, ...props }: { name: string; [key: string]: any }) => {
   const LucideIcon = (icons as any)[name];

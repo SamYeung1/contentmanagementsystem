@@ -179,7 +179,7 @@ export default function DataTable({
               </TableRow>))}
             {((currentData.length === 0 && !serverMode) || (currentData.length === 0 && serverMode && !serverModePagination?.isLoading)) && (
               <TableRow>
-                <TableCell colSpan={header.length} className="text-center py-4">
+                <TableCell colSpan={header.length}  className="text-center py-4">
                   No data found
                 </TableCell>
               </TableRow>
