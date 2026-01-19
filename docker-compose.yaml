@@ -1,5 +1,18 @@
 version: "3.9"
 services:
+  cms-frontend:
+    depends_on:
+      - cms-backend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      CMS_API_BASE_URL: http://cms-backend:3000
+      PRIVATE_KEY_PATH: /usr/src/app/key/private.pem
+      PUBLIC_KEY_PATH: /usr/src/app/key/public.pem
   postgresql:
     image: bitnami/postgresql:14
     volumes:
