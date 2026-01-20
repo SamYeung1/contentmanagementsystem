@@ -45,8 +45,8 @@ export class PermissionService {
   }, orderBy: Ordering<PermissionEntity> = { id: 'asc' }): Promise<PagingResult<PermissionEntity>> {
     let where = {};
     if (like) {
-      where = DatabaseFilterUtil.createLikeFilter<PermissionEntity>(like);
+      where = DatabaseFilterUtil.createLikeFilter<PermissionEntity>(like,true);
     }
-    return this.permissionRepository.findByWithPagination({ ...where, isDeleted: false }, orderBy, paginate);
+    return this.permissionRepository.findByWithPagination(where, orderBy, paginate);
   }
 }

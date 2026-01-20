@@ -57,8 +57,8 @@ export class RoleService {
   }, orderBy: Ordering<RoleEntity> = { id: 'asc' }): Promise<PagingResult<RoleEntity>> {
     let where = {};
     if (like) {
-      where = DatabaseFilterUtil.createLikeFilter<RoleEntity>(like);
+      where = DatabaseFilterUtil.createLikeFilter<RoleEntity>(like,true);
     }
-    return this.roleRepository.findByWithPagination({ ...where, isDeleted: false }, orderBy, paginate);
+    return this.roleRepository.findByWithPagination(where, orderBy, paginate);
   }
 }

@@ -31,12 +31,12 @@ export class RoleRepository implements CrudInterface<number, RoleEntity> {
   findById(id: number): Promise<RoleEntity | null> {
     return this.repository.findOne({
       where: { id: id, isDeleted: false },
-      relations: { createdBy: true, updatedBy: true,permissions:true  },
+      relations: { createdBy: true, updatedBy: true, permissions: true },
     });
   }
 
   findBy(filter: FindOptionsWhere<RoleEntity>, orderBy: FindOptionsOrder<RoleEntity>): Promise<RoleEntity[]> {
-    const relations: FindOptionsRelations<RoleEntity> = { createdBy: true, updatedBy: true,permissions:true };
+    const relations: FindOptionsRelations<RoleEntity> = { createdBy: true, updatedBy: true, permissions: true };
     const where: FindOptionsWhere<RoleEntity> = { ...filter, isDeleted: false };
     return this.repository.find({
       where: where,
@@ -45,9 +45,11 @@ export class RoleRepository implements CrudInterface<number, RoleEntity> {
     });
   }
 
-  async findByWithPagination(filter: FindOptionsWhere<RoleEntity>, orderBy: FindOptionsOrder<RoleEntity>, paginate: Paging): Promise<PagingResult<RoleEntity>> {
-    const relations: FindOptionsRelations<RoleEntity> = { createdBy: true, updatedBy: true,permissions:true  };
-    const where: FindOptionsWhere<RoleEntity> = { ...filter, isDeleted: false };
+  async findByWithPagination(filter: FindOptionsWhere<RoleEntity> | FindOptionsWhere<RoleEntity>[], orderBy: FindOptionsOrder<RoleEntity>, paginate: Paging): Promise<PagingResult<RoleEntity>> {
+    const relations: FindOptionsRelations<RoleEntity> = { createdBy: true, updatedBy: true, permissions: true };
+    const where = Array.isArray(filter)
+      ? filter.map(cond => ({ ...cond, isDeleted: false }))
+      : { ...filter, isDeleted: false };
     const [data, total] = await this.repository.findAndCount({
       where: where,
       relations: relations,

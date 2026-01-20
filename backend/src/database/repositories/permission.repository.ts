@@ -45,9 +45,11 @@ export class PermissionRepository implements CrudInterface<number, PermissionEnt
     });
   }
 
-  async findByWithPagination(filter: FindOptionsWhere<PermissionEntity>, orderBy: FindOptionsOrder<PermissionEntity>, paginate: Paging): Promise<PagingResult<PermissionEntity>> {
+  async findByWithPagination(filter: FindOptionsWhere<PermissionEntity> |  FindOptionsWhere<PermissionEntity>[], orderBy: FindOptionsOrder<PermissionEntity>, paginate: Paging): Promise<PagingResult<PermissionEntity>> {
     const relations: FindOptionsRelations<PermissionEntity> = { createdBy: true, updatedBy: true };
-    const where: FindOptionsWhere<PermissionEntity> = { ...filter, isDeleted: false };
+    const where = Array.isArray(filter)
+      ? filter.map(cond => ({ ...cond, isDeleted: false }))
+      : { ...filter, isDeleted: false };
     const [data, total] = await this.repository.findAndCount({
       where: where,
       relations: relations,
