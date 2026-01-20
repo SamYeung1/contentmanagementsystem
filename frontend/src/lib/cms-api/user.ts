@@ -20,6 +20,7 @@ interface UserResponse {
 
 interface UserRequest {
   orderBy: Direction;
+  search?:string | null;
   page?: number | null;
 }
 
@@ -34,6 +35,9 @@ export async function list(input: UserRequest, token: string | (Encryption | nul
     bearerToken = token;
   }
   let url = `${process.env.CMS_API_BASE_URL}/users?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
+  if(input.search !== null && input.search !== undefined) {
+    url += `&filter[like][name]=${input.search}&filter[like][email]=${input.search}`;
+  }
   if (input.page !== null && input.page !== undefined) {
     url += `&paginate[limit]=${PAGINATION_OPTIONS.limit}&paginate[page]=${input.page}`;
   }

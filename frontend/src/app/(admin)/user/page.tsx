@@ -1,16 +1,19 @@
 'use client';
-import React, { JSX } from 'react';
+import React, { JSX, useState } from 'react';
 import { HeadCellItem } from '@/components/data-table/type';
 import { UserResponse } from '@/type';
 import ServerDataTable from '@/components/data-table/server-data-table';
 import { SortableStatus } from '@/components/data-table/data-table';
-import { Badge } from 'flowbite-react';
+import { Badge, Button, TextInput } from 'flowbite-react';
 import DropdownManagementMenu, { DropdownManagementMenuPermission } from '@/components/dropdown-management-menu';
+import { BreadcrumbItem, CmsBreadcrumb } from '@/components/layouts/cms/cms-breadcrumb';
+import { PlusIcon, SearchIcon } from 'lucide-react';
+import DataTableHeader from '@/components/data-table/data-table-header';
 
-const permission:DropdownManagementMenuPermission = {
-  canDelete:true,
-  canEdit:true
-}
+const permission: DropdownManagementMenuPermission = {
+  canDelete: true,
+  canEdit: true,
+};
 const HEADERS: HeadCellItem[] = [
   { label: 'Id', key: 'id' },
   { label: 'Email', key: 'email' },
@@ -19,20 +22,21 @@ const HEADERS: HeadCellItem[] = [
     label: 'Roles', key: 'roles', render: ({ item }: { item: UserResponse }) => {
       const limit = 3;
       if (item.roles.length >= limit) {
-        return <span className={'flex flex-wrap gap-2'}>{item.roles.slice(0, limit).map((item,index) => <Badge
+        return <span className={'flex flex-wrap gap-2'}>{item.roles.slice(0, limit).map((item, index) => <Badge
           color="info" key={`badge_role_${index}`}>{item.name}</Badge>)}<Badge
           color="info">{item.roles.slice(limit).length}+</Badge></span>;
       } else {
-        return <span className={'flex flex-wrap gap-2'}>{item.roles.map((item,index) => <Badge
+        return <span className={'flex flex-wrap gap-2'}>{item.roles.map((item, index) => <Badge
           color="info" key={`badge_role_${index}`}>{item.name}</Badge>)}</span>;
       }
     }, sortable: false,
   },
   {
     label: '', key: 'action', sortable: false, render: ({ item }: { item: UserResponse }) => {
-      return <div className={"flex justify-end"}><DropdownManagementMenu permission={permission} onMenuClicked={(id)=>{
-        console.log(id,item);
-      }}/></div>;
+      return <div className={'flex justify-end'}><DropdownManagementMenu permission={permission}
+                                                                         onMenuClicked={(id) => {
+                                                                           console.log(id, item);
+                                                                         }} /></div>;
     },
   },
 ];
@@ -42,5 +46,17 @@ export default function UserPage(): JSX.Element {
     key: 'id',
     direction: 'ASC',
   };
-  return <ServerDataTable defaultSort={defaultSort} header={HEADERS} url={'/api/user'} />;
+  const breadcrumbItems: BreadcrumbItem[] = [
+    { text: 'page_title_dashboard', href: '/dashboard' },
+    { text: 'page_title_user_management' },
+  ];
+  const [queryParams, setQueryParams] = useState({});
+  const handleSearch = (text:string) => {
+    setQueryParams(prev => ({ ...prev, search: text }));
+  };
+  return <div className={'flex flex-col gap-2'}>
+    <CmsBreadcrumb items={breadcrumbItems} />
+    <DataTableHeader addButton={{ title: 'button_add_user', permission: { canAdd: true }}} onSearch={handleSearch}/>
+    <ServerDataTable defaultSort={defaultSort} header={HEADERS} url={'/api/user'} query={queryParams}/>
+  </div>;
 }

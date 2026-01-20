@@ -3,6 +3,7 @@ import React, {useState } from 'react';
 import { NavigationItem } from '@/type/navigation-item';
 import CmsHeader from '@/components/layouts/cms/cms-header';
 import CmsAside from '@/components/layouts/cms/cms-aside';
+import { CmsBreadcrumb } from '@/components/layouts/cms/cms-breadcrumb';
 
 interface CMSLayoutProps {
   navigationItems: NavigationItem[];

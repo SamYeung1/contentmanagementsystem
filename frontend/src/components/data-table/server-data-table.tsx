@@ -5,6 +5,7 @@ import { UserResponse } from '@/type';
 import DataTable, { ServerModePagination, SortableStatus } from '@/components/data-table/data-table';
 import { PAGINATION_OPTIONS } from '@/config/setting';
 import { HeadCellItem } from '@/components/data-table/type';
+import * as querystring from 'node:querystring';
 
 function isPageResponse(data: any): data is PageResponse<any> {
   return (
@@ -17,10 +18,11 @@ function isPageResponse(data: any): data is PageResponse<any> {
 interface ServerDataTableProps {
   header: HeadCellItem[];
   defaultSort: SortableStatus;
+  query?: Record<string, string>;
   url: string;
 }
 
-export default function ServerDataTable({ header, defaultSort, url }: ServerDataTableProps) {
+export default function ServerDataTable({ header, defaultSort, url, query }: ServerDataTableProps) {
   const [pageData, setPageData] = useState<PageResponse<UserResponse>>({ total: 0, results: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
@@ -37,9 +39,15 @@ export default function ServerDataTable({ header, defaultSort, url }: ServerData
   }), [pageData.total, loading]);
   const limit = PAGINATION_OPTIONS.limit;
   useEffect(() => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      orderBy: JSON.stringify(sortableStatus),
+      ...query
+    });
     const controller = new AbortController();
     setLoading(true);
-    fetch(`${url}?page=${page}&orderBy=${JSON.stringify(sortableStatus)}`, { signal: controller.signal })
+    fetch(`${url}?${params.toString()}`, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error('Network response was not ok');
         return response.json();
@@ -59,7 +67,7 @@ export default function ServerDataTable({ header, defaultSort, url }: ServerData
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [page,sortableStatus]);
+  }, [url, page, sortableStatus, limit, JSON.stringify(query)]);
   return <DataTable data={pageData.results} defaultSort={defaultSort} perPageTotal={limit} header={header}
                     serverMode={true} serverModePagination={serverModePagination} />;
 }
