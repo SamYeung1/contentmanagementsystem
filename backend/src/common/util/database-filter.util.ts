@@ -1,18 +1,27 @@
-import { Like } from 'typeorm';
+import { FindOptionsWhere, Like } from 'typeorm';
 
 export class DatabaseFilterUtil {
-  static createLikeFilter<T>(value: Record<keyof T, any>,orOperator:boolean = false): Record<keyof T, any> | Record<keyof T, any>[] {
-    if(orOperator){
-      const result:Record<keyof T, any>[] = [];
+  static createLikeFilter<T>(
+    value: Record<string, any>,
+    orOperator: boolean = false,
+  ): FindOptionsWhere<T> | FindOptionsWhere<T>[] {
+    if (orOperator) {
+      const result: FindOptionsWhere<T>[] = [];
+
       for (const key in value) {
-        value[key] = Like(`%${value[key]}%`);
-        result.push(value);
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          const singleCondition: any = { [key]: Like(`%${value[key]}%`), };
+          result.push(singleCondition);
+        }
       }
       return result;
     }
+    const andResult: any = {};
     for (const key in value) {
-      value[key] = Like(`%${value[key]}%`);
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        andResult[key] = Like(`%${value[key]}%`);
+      }
     }
-    return value;
+    return andResult;
   }
 }
