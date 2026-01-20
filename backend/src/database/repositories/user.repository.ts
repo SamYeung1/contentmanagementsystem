@@ -46,9 +46,11 @@ export class UserRepository implements CrudInterface<number, UserEntity> {
     });
   }
 
-  async findByWithPagination(filter: FindOptionsWhere<UserEntity>, orderBy: FindOptionsOrder<UserEntity>, paginate: Paging): Promise<PagingResult<UserEntity>> {
+  async findByWithPagination(filter: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[], orderBy: FindOptionsOrder<UserEntity>, paginate: Paging): Promise<PagingResult<UserEntity>> {
     const relations: FindOptionsRelations<UserEntity> = { createdBy: true, updatedBy: true, roles: { permissions: true } };
-    const where: FindOptionsWhere<UserEntity> = { ...filter, isDeleted: false };
+    const where = Array.isArray(filter)
+      ? filter.map(cond => ({ ...cond, isDeleted: false }))
+      : { ...filter, isDeleted: false };
     const [data, total] = await this.repository.findAndCount({
       where: where,
       relations: relations,

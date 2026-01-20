@@ -4,7 +4,7 @@ import { PermissionEntity, RoleEntity, UserEntity } from '../../database/entitie
 import { Ordering, Paging, PagingResult } from '../../common/type';
 import { DatabaseFilterUtil } from '../../common/util';
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { In } from 'typeorm';
+import { And, In } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -53,8 +53,8 @@ export class UserService {
   }, orderBy: Ordering<UserEntity> = { id: 'asc' }): Promise<PagingResult<UserEntity>> {
     let where = {};
     if (like) {
-      where = DatabaseFilterUtil.createLikeFilter<UserEntity>(like);
+      where = DatabaseFilterUtil.createLikeFilter<UserEntity>(like,true);
     }
-    return this.userRepository.findByWithPagination({ ...where, isDeleted: false }, orderBy, paginate);
+    return this.userRepository.findByWithPagination(where, orderBy, paginate);
   }
 }
