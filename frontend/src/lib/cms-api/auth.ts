@@ -1,6 +1,6 @@
 import AuthException from '@/exception/api/auth-exception';
-import Role from '@/type/role';
 import { getCurrentUser } from '@/lib/user-session';
+import { API } from '@/config/setting';
 
 export interface LoginResponse {
   access_token: string;
@@ -8,11 +8,16 @@ export interface LoginResponse {
   expires_in: number;
   token_type: string;
 }
-interface CurrentUserResponse {
+
+export interface CurrentUserResponse {
   id: number;
   email: string;
   name: string;
-  roles: Role[];
+  permissions: {
+    action: string;
+    resource: string
+  }[];
+  isRootUser: boolean;
 }
 
 export interface RefreshRequest {
@@ -26,7 +31,7 @@ export interface LoginRequest {
 
 export async function login(input: LoginRequest): Promise<LoginResponse> {
   const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/auth/login`,
+    `${API.CMS_API}/auth/login`,
     {
       method: 'POST',
       headers: {
@@ -43,14 +48,14 @@ export async function login(input: LoginRequest): Promise<LoginResponse> {
   if (!auth) {
     throw new AuthException();
   }
-  const bufferTime = 2 * 60 // 2 mins
+  const bufferTime = 2 * 60; // 2 mins
   auth.expires_in = Date.now() + ((auth.expires_in - bufferTime) * 1000);
   return auth as LoginResponse;
 }
 
 export async function refresh(input: RefreshRequest): Promise<LoginResponse> {
   const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/auth/refresh`,
+    `${API.CMS_API}/auth/refresh`,
     {
       method: 'POST',
       headers: {
@@ -66,7 +71,7 @@ export async function refresh(input: RefreshRequest): Promise<LoginResponse> {
   if (!auth) {
     throw new AuthException();
   }
-  const bufferTime = 2 * 60 // 2 mins
+  const bufferTime = 2 * 60; // 2 mins
   auth.expires_in = Date.now() + ((auth.expires_in - bufferTime) * 1000);
   return auth as LoginResponse;
 }
@@ -74,7 +79,7 @@ export async function refresh(input: RefreshRequest): Promise<LoginResponse> {
 export async function currentUser(): Promise<CurrentUserResponse> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/auth/me`,
+    `${API.CMS_API}/auth/me`,
     {
       method: 'GET',
       headers: {
@@ -87,7 +92,6 @@ export async function currentUser(): Promise<CurrentUserResponse> {
     throw new AuthException();
   }
   const result = await res.json();
-  console.log(result);
   if (!result) {
     throw new AuthException();
   }

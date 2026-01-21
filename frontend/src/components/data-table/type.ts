@@ -5,4 +5,5 @@ export type HeadCellItem = {
   key:string;
   sortable?: boolean;
   render?:(item: any) => ReactNode;
+  hidden?:boolean;
 }

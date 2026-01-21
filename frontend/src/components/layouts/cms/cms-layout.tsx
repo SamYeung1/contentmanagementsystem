@@ -1,34 +1,43 @@
 'use client';
-import React, {useState } from 'react';
-import { NavigationItem } from '@/type/navigation-item';
+import React, { useState } from 'react';
+import { NavigationItem } from '@/type/cms';
 import CmsHeader from '@/components/layouts/cms/cms-header';
 import CmsAside from '@/components/layouts/cms/cms-aside';
-import { CmsBreadcrumb } from '@/components/layouts/cms/cms-breadcrumb';
+import { usePathname } from 'next/navigation';
+import { checkPermission } from '@/lib/util';
+import { CurrentUserResponse } from '@/lib/cms-api/auth';
+import CurrentUserProvider from '@/context/current-user-context';
+import { ErrorAlert } from '@/components/alert/error-alert';
 
 interface CMSLayoutProps {
   navigationItems: NavigationItem[];
+  user: CurrentUserResponse;
   children: React.ReactNode;
 }
-export default function CMSLayout({ navigationItems, children }: CMSLayoutProps) {
+
+export default function CMSLayout({ user, navigationItems, children }: CMSLayoutProps) {
+  const pathname = usePathname() || '';
   const [isOpen, setIsOpen] = useState(false);
   const closeSidebar = () => setIsOpen(false);
   const mobileButtonHandler = () => setIsOpen(!isOpen);
-  return (
-    <div className="flex flex-col h-screen">
-      <CmsHeader isOpenMenu={isOpen} mobileButtonHandler={mobileButtonHandler} />
-      <div className="flex flex-1 pt-16 overflow-hidden">
-        <CmsAside isOpenMenu={isOpen} navigationItems={navigationItems} />
-        {/* --- Overlay for Mobile --- */}
-        {isOpen && (
-          <div
-            className="fixed inset-0 z-30 bg-gray-900/50 lg:hidden"
-            onClick={closeSidebar}
-          />
-        )}
-        <main className="flex-1 relative overflow-y-auto p-4">
-          {children}
-        </main>
+  return (<CurrentUserProvider user={user}>
+      <div className="flex flex-col h-screen">
+        <CmsHeader isOpenMenu={isOpen} mobileButtonHandler={mobileButtonHandler} />
+        <div className="flex flex-1 pt-16 overflow-hidden">
+          <CmsAside isOpenMenu={isOpen} navigationItems={navigationItems} />
+          {/* --- Overlay for Mobile --- */}
+          {isOpen && (
+            <div
+              className="fixed inset-0 z-30 bg-gray-900/50 lg:hidden"
+              onClick={closeSidebar}
+            />
+          )}
+          <main className="flex-1 relative overflow-y-auto p-4">
+            {!checkPermission(user, 'READ', pathname) && <ErrorAlert message={'permission_message'} />}
+            {checkPermission(user, 'READ', pathname) && children}
+          </main>
+        </div>
       </div>
-    </div>
+    </CurrentUserProvider>
   );
 }

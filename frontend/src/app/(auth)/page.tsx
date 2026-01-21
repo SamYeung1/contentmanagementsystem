@@ -1,11 +1,12 @@
 'use client';
-import { Alert, Button, Card } from 'flowbite-react';
+import { Button, Card } from 'flowbite-react';
 import TextField from '@/components/forms/fields/text-field';
 import { actionLogin, LoginSubmitData } from '@/app/(auth)/form-action/auth';
 import { useActionState, useEffect } from 'react';
-import { InfoIcon,LucideMail,KeyIcon } from 'lucide-react';
+import { LucideMail,KeyIcon } from 'lucide-react';
 import { useTranslations } from 'use-intl';
 import { useRouter } from 'next/navigation';
+import { ErrorAlert } from '@/components/alert/error-alert';
 
 
 export default function LoginPage() {
@@ -27,15 +28,14 @@ export default function LoginPage() {
     <div className="flex h-screen w-full items-center justify-center">
       <Card className="min-w-sm">
         <h1 className="mb-6 text-center text-2xl font-bold dark:text-white text-gray-900">{t("title")}</h1>
-        {state.serverError?.message && <Alert color="failure" icon={InfoIcon}>
-          <span className="font-medium">{state.serverError?.message}</span>
-        </Alert>}
+        {state.serverError?.message && <ErrorAlert message={state.serverError?.message}/>}
         <form action={formAction} className="flex flex-col">
           <div className="pb-2">
             <TextField errorMessage={state.errors ? state.errors['email']?.join(', ') : null}
                        defaultValue={initialValues.initValue?.email} label={'Email'} name={'email'}
                        type={'email'}
                        icon={LucideMail}
+                       required
                        autoComplete="off" />
           </div>
           <div className="pb-6">
@@ -43,6 +43,7 @@ export default function LoginPage() {
                        defaultValue={initialValues.initValue?.password} label={'Password'} name={'password'}
                        type={'password'}
                        icon={KeyIcon}
+                       required
                        autoComplete="new-password" />
           </div>
           <Button

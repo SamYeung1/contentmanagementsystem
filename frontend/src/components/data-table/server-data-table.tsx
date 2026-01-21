@@ -1,11 +1,10 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import PageResponse from '@/type/base/page-response';
-import { UserResponse } from '@/type';
+import { UserResponse } from '@/type/cms';
 import DataTable, { ServerModePagination, SortableStatus } from '@/components/data-table/data-table';
 import { PAGINATION_OPTIONS } from '@/config/setting';
 import { HeadCellItem } from '@/components/data-table/type';
-import * as querystring from 'node:querystring';
 
 function isPageResponse(data: any): data is PageResponse<any> {
   return (

@@ -1,0 +1,1 @@
+export interface PermissionAction {action: string; resource: string }

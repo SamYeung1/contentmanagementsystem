@@ -1,10 +1,10 @@
 import AuthException from '@/exception/api/auth-exception';
 import PageResponse from '@/type/base/page-response';
-import Role from '@/type/role';
+import Role from '@/type/cms/role';
 import By from '@/type/base/by';
 import Direction from '@/type/base/direction';
 import {getCurrentUser } from '@/lib/user-session';
-import { PAGINATION_OPTIONS } from '@/config/setting';
+import { API, PAGINATION_OPTIONS } from '@/config/setting';
 
 interface UserResponse {
   id: number;
@@ -25,7 +25,7 @@ interface UserRequest {
 
 export async function list(input: UserRequest): Promise<PageResponse<UserResponse>> {
   const bearerToken: string = (await getCurrentUser()).access_token;
-  let url = `${process.env.CMS_API_BASE_URL}/users?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
+  let url = `${API.CMS_API}/users?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
   if(input.search !== null && input.search !== undefined) {
     url += `&filter[like][name]=${input.search}&filter[like][email]=${input.search}`;
   }

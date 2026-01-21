@@ -153,7 +153,7 @@ export default function DataTable({
         <Table hoverable>
           <TableHead>
             <TableRow>
-              {header.map((item, index) => (
+              {header.filter((item)=>item.hidden === undefined || !item.hidden).map((item, index) => (
                 <SortableHeadCell key={`sortable_head_cell_${index}`}
                                   label={item.label}
                                   sortKey={item.key}
@@ -171,7 +171,7 @@ export default function DataTable({
               </TableCell>
             </TableRow> : currentData.map((item, index) => (
               <TableRow key={`table_row_${index}`}>
-                {header.map((headerItem, headerIndex) => (
+                {header.filter((item)=>item.hidden === undefined || !item.hidden).map((headerItem, headerIndex) => (
                   <TableCell key={`table_cell_${headerIndex}`}>{headerItem.render ?
                     <headerItem.render key={`table_cell_render_${headerIndex}`}
                                        item={item} /> : item[headerItem.key]}</TableCell>

@@ -3,7 +3,7 @@ import {
 } from 'flowbite-react';
 import { HelpCircle, icons } from 'lucide-react';
 import React, { JSX } from 'react';
-import { NavigationItem } from '@/type/navigation-item';
+import { NavigationItem } from '@/type/cms';
 import { useLocale } from 'use-intl';
 import ClientOnly from '@/components/client-only';
 
