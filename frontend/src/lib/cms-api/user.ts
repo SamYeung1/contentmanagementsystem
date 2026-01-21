@@ -3,8 +3,7 @@ import PageResponse from '@/type/base/page-response';
 import Role from '@/type/role';
 import By from '@/type/base/by';
 import Direction from '@/type/base/direction';
-import { Encryption } from '@/lib/encryption';
-import { decryptCurrentUserSession } from '@/lib/user-session';
+import {getCurrentUser } from '@/lib/user-session';
 import { PAGINATION_OPTIONS } from '@/config/setting';
 
 interface UserResponse {
@@ -24,16 +23,8 @@ interface UserRequest {
   page?: number | null;
 }
 
-export async function list(input: UserRequest, token: string | (Encryption | null)): Promise<PageResponse<UserResponse>> {
-  let bearerToken: string;
-  if (typeof token !== 'string') {
-    if (!token) {
-      throw new Error('SID session does not exist!');
-    }
-    bearerToken = decryptCurrentUserSession(token).access_token;
-  } else {
-    bearerToken = token;
-  }
+export async function list(input: UserRequest): Promise<PageResponse<UserResponse>> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
   let url = `${process.env.CMS_API_BASE_URL}/users?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
   if(input.search !== null && input.search !== undefined) {
     url += `&filter[like][name]=${input.search}&filter[like][email]=${input.search}`;
@@ -62,16 +53,8 @@ export async function list(input: UserRequest, token: string | (Encryption | nul
   return result as PageResponse<UserResponse>;
 }
 
-export async function get(id: string, token: string | (Encryption | null)): Promise<UserResponse> {
-  let bearerToken: string;
-  if (typeof token !== 'string') {
-    if (!token) {
-      throw new Error('SID session does not exist!');
-    }
-    bearerToken = decryptCurrentUserSession(token).access_token;
-  } else {
-    bearerToken = token;
-  }
+export async function get(id: string): Promise<UserResponse> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
     `${process.env.CMS_API_BASE_URL}/users/${id}`,
     {

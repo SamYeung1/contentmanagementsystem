@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import fs from 'fs';
+import * as fs from 'fs';
 
 export interface Encryption {
   encryptedData: string,

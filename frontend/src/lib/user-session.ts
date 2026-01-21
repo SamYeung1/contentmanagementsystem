@@ -32,3 +32,15 @@ export async function getCurrentUser() {
   }
   return decryptCurrentUserSession(userSession);
 }
+export function verifyAndGetToken(token: string | (Encryption | null)): string {
+  let bearerToken: string;
+  if (typeof token !== 'string') {
+    if (!token) {
+      throw new Error('SID session does not exist!');
+    }
+    bearerToken = decryptCurrentUserSession(token).access_token;
+  } else {
+    bearerToken = token;
+  }
+  return bearerToken
+}
