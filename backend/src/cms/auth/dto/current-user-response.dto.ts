@@ -21,6 +21,8 @@ export class CurrentUserResponseDto {
     })
   })
   permissions: { action: string; resource: string }[];
+  @Expose()
+  isRootUser: boolean;
   constructor(params?: Partial<UserEntity>) {
     Object.assign(this, params);
   }
