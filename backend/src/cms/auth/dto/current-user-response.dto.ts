@@ -1,6 +1,5 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { UserEntity } from '../../../database/entities';
-import { GetRoleResponseDto } from '../../role/dto';
 
 export class CurrentUserResponseDto {
   @Expose()
@@ -10,9 +9,18 @@ export class CurrentUserResponseDto {
   @Expose()
   name: string;
   @Expose()
-  @Type(() => GetRoleResponseDto)
-  roles: GetRoleResponseDto[];
-
+  @Transform(({ obj }) => {
+    const roles = obj.roles || [];
+    const allPermissions = roles.flatMap((role) => role.permissions || []);
+    return allPermissions.map((permission) => {
+      const [action, resource] = permission.action.trim().split('@');
+      return {
+        action,
+        resource
+      }
+    })
+  })
+  permissions: { action: string; resource: string }[];
   constructor(params?: Partial<UserEntity>) {
     Object.assign(this, params);
   }
