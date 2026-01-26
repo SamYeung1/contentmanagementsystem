@@ -1,13 +1,14 @@
 'use client';
 import React, { useState } from 'react';
 import { NavigationItem } from '@/type/cms';
-import CmsHeader from '@/components/layouts/cms/cms-header';
-import CmsAside from '@/components/layouts/cms/cms-aside';
+import CmsHeader from '@/components/layouts/cms/base/cms-header';
+import CmsAside from '@/components/layouts/cms/base/cms-aside';
 import { usePathname } from 'next/navigation';
 import { checkPermission } from '@/lib/util';
 import { CurrentUserResponse } from '@/lib/cms-api/auth';
 import CurrentUserProvider from '@/context/current-user-context';
 import { ErrorAlert } from '@/components/alert/error-alert';
+import { useTranslations } from 'use-intl';
 
 interface CMSLayoutProps {
   navigationItems: NavigationItem[];
@@ -17,6 +18,7 @@ interface CMSLayoutProps {
 
 export default function CMSLayout({ user, navigationItems, children }: CMSLayoutProps) {
   const pathname = usePathname() || '';
+  const t = useTranslations('Common')
   const [isOpen, setIsOpen] = useState(false);
   const closeSidebar = () => setIsOpen(false);
   const mobileButtonHandler = () => setIsOpen(!isOpen);
@@ -33,7 +35,7 @@ export default function CMSLayout({ user, navigationItems, children }: CMSLayout
             />
           )}
           <main className="flex-1 relative overflow-y-auto p-4">
-            {!checkPermission(user, 'READ', pathname) && <ErrorAlert message={'permission_message'} />}
+            {!checkPermission(user, 'READ', pathname) && <ErrorAlert message={t('alert.permission_message')} />}
             {checkPermission(user, 'READ', pathname) && children}
           </main>
         </div>

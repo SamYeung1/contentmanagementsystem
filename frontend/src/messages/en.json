@@ -3,8 +3,28 @@
     "title": "Admin Portal",
     "auth_error": "Email or Password is invalid"
   },
+  "UserPage": {
+    "page_title": "User",
+    "page_title_edit": "Edit User",
+    "page_title_create": "Create User",
+    "button_add_user": "Create user",
+    "form": {
+
+    }
+  },
+  "DashboardPage": {
+    "page_title": "Dashboard"
+  },
   "DropdownManagementMenu": {
     "delete": "Delete",
     "edit": "Edit"
+  },
+  "Common": {
+    "alert": {
+      "permission_message": "Permission denied"
+    },
+    "input": {
+      "search_placeholder": "Search...."
+    }
   }
 }
