@@ -5,8 +5,8 @@ import { BreadcrumbItem } from '@/components/layouts/cms/base/cms-breadcrumb';
 import { useActionState, useMemo } from 'react';
 import TextField from '@/components/forms/fields/text-field';
 import { Button, Card } from 'flowbite-react';
-import MultiSelectField from '@/components/forms/fields/multi-select-field';
 import { actionCreateUser } from '@/app/(admin)/user/edit/form-action/create';
+import ServerMultiSelectField from '@/components/forms/fields/server-multi-select-field';
 
 export default function UserPageCreate() {
   const t = useTranslations();
@@ -23,25 +23,18 @@ export default function UserPageCreate() {
   return <CmsMain breadcrumbItems={breadcrumbItems}>
     <Card>
       <form action={formAction} className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-          <TextField label={t('UserPage.form.name')} name={'name'} />
-          <TextField label={t('UserPage.form.email')} name={'email'} type={'email'} />
-          <TextField label={t('UserPage.form.password')} name={'password'} type={'password'} />
-          <MultiSelectField defaultValue={state.initValue?.roles} name={'roles'} serverMode={true} onSearch={(value)=>{
-            console.log(value);
-          }} options={[
-            { value: 'usa', label: 'United States' },
-            { value: 'ca', label: 'Canada' },
-            { value: 'fr', label: 'France' },
-            { value: 'de', label: 'Germany' },
-            { value: 'jp', label: 'Japan' },
-          ]} />
-          <div className="md:col-span-2">
-            <div className={'flex gap-2 justify-end'}>
-              <Button color={'red'} outline>{t('Common.button.back')}</Button>
-              <Button type={'submit'}>{t('Common.button.submit')}</Button>
-            </div>
+        <TextField label={t('UserPage.form.name')} name={'name'} />
+        <TextField label={t('UserPage.form.email')} name={'email'} type={'email'} />
+        <TextField label={t('UserPage.form.password')} name={'password'} type={'password'} />
+        <ServerMultiSelectField textMapper={(item)=>({value:item.id,label:`${item.id} - ${item.name}`})} defaultValue={state.initValue?.roles} name={'roles'} url={'/api/user'}/>
+        <div className="md:col-span-2">
+          <div className={'flex gap-2 justify-end'}>
+            <Button color={'red'} outline>{t('Common.button.back')}</Button>
+            <Button type={'submit'}>{t('Common.button.submit')}</Button>
           </div>
+        </div>
       </form>
-    </Card>
-  </CmsMain>;
+    </Card>;
+  </CmsMain>
+    ;
 }

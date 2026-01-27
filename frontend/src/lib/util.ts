@@ -1,5 +1,6 @@
 import { PERMISSION_OPTIONS } from '@/config/setting';
 import { CurrentUserResponse } from '@/lib/cms-api/auth';
+import PageResponse from '@/type/base/page-response';
 
 export const debounce = <T extends unknown[]>(
   callback: (...args: T) => void,
@@ -26,4 +27,12 @@ export function checkPermission(user: CurrentUserResponse | null, action: 'READ'
     return false;
   }
   return user.permissions.filter((permission) => (permission.action === action || permission.action === '*') && permission.resource === resourceOptions).length > 0;
+}
+
+export function isPageResponse(data: any): data is PageResponse<any> {
+  return (
+    data &&
+    typeof data.total === 'number' &&
+    Array.isArray(data.results)
+  );
 }

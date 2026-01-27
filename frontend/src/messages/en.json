@@ -25,7 +25,8 @@
     },
     "input": {
       "search_placeholder": "Search...",
-      "select_placeholder": "Select Option..."
+      "select_placeholder": "Select Option...",
+      "select_no_result": "No result"
     },
     "button": {
       "submit": "Submit",

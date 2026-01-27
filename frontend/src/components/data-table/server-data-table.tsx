@@ -5,14 +5,8 @@ import { UserResponse } from '@/type/cms';
 import DataTable, { ServerModePagination, SortableStatus } from '@/components/data-table/data-table';
 import { PAGINATION_OPTIONS } from '@/config/setting';
 import { HeadCellItem } from '@/components/data-table/type';
+import { isPageResponse } from '@/lib/util';
 
-function isPageResponse(data: any): data is PageResponse<any> {
-  return (
-    data &&
-    typeof data.total === 'number' &&
-    Array.isArray(data.results)
-  );
-}
 
 interface ServerDataTableProps {
   header: HeadCellItem[];

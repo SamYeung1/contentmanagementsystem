@@ -6,6 +6,7 @@ import Direction from '@/type/base/direction';
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/user/[[...id]]'>) {
   const searchParams = req.nextUrl.searchParams;
   const page = searchParams.has('page') ? parseInt(searchParams.get('page')!) : null;
+  const listAll = searchParams.has('listAll') ? parseInt(searchParams.get('listAll')!) === 1 : false;
   const orderBy = searchParams.has('orderBy') ? JSON.parse(searchParams.get('orderBy')!) : {
     key: 'id',
     direction: 'ASC',
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/user/[[...id
   if (id) {
     return Response.json(await get(id[0]));
   } else {
-    return Response.json(await list({ page: page, orderBy: orderBy as Direction, search: search }));
+    return Response.json(await list({ page: page, orderBy: orderBy as Direction, search: search,listAll:listAll }));
   }
 
 }
