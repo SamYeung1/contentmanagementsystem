@@ -3,7 +3,7 @@ import PageResponse from '@/type/base/page-response';
 import Role from '@/type/cms/role';
 import By from '@/type/base/by';
 import Direction from '@/type/base/direction';
-import {getCurrentUser } from '@/lib/user-session';
+import { getCurrentUser } from '@/lib/user-session';
 import { API, PAGINATION_OPTIONS } from '@/config/setting';
 
 interface UserResponse {
@@ -19,18 +19,19 @@ interface UserResponse {
 
 interface UserRequest {
   orderBy: Direction;
-  search?:string | null;
+  search?: string | null;
   page?: number | null;
+  listAll?: boolean;
 }
 
 export async function list(input: UserRequest): Promise<PageResponse<UserResponse>> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   let url = `${API.CMS_API}/users?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
-  if(input.search !== null && input.search !== undefined) {
+  if (input.search !== null && input.search !== undefined) {
     url += `&filter[like][name]=${input.search}&filter[like][email]=${input.search}`;
   }
   if (input.page !== null && input.page !== undefined) {
-    url += `&paginate[limit]=${PAGINATION_OPTIONS.limit}&paginate[page]=${input.page}`;
+    url += `&paginate[limit]=${input.listAll === false || input.listAll === undefined ? PAGINATION_OPTIONS.limit : 0}&paginate[page]=${input.listAll === false || input.listAll === undefined ? input.page : 1}`;
   }
   const res = await fetch(
     url,

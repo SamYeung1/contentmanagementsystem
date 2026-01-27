@@ -1,18 +1,19 @@
 'use client';
 import { Button, Card } from 'flowbite-react';
 import TextField from '@/components/forms/fields/text-field';
-import { actionLogin, LoginSubmitData } from '@/app/(auth)/form-action/auth';
+import { actionLogin, SubmitModel } from '@/app/(auth)/form-action/auth';
 import { useActionState, useEffect } from 'react';
 import { LucideMail,KeyIcon } from 'lucide-react';
 import { useTranslations } from 'use-intl';
 import { useRouter } from 'next/navigation';
 import { ErrorAlert } from '@/components/alert/error-alert';
+import FormSubmitData from '@/type/base/form-submit-data';
 
 
 export default function LoginPage() {
   const router = useRouter();
   const t = useTranslations('LoginPage');
-  const initialValues: LoginSubmitData = {
+  const initialValues: FormSubmitData<SubmitModel> = {
     initValue: {
       password: '',
       email: '',

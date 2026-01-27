@@ -8,18 +8,17 @@ interface TextFieldProps extends TextInputProps {
 }
 
 export default function TextField({errorMessage, icon, label, name, ...props }: TextFieldProps) {
-  {
     return <div>
-      <Label>{label}</Label>
-      <TextInput name={name} icon={icon} {...props} />
+      <div className="mb-2 block">
+        <Label htmlFor={name}>{label}</Label>
+      </div>
+      <TextInput id={name} className={'mt-2'} name={name} icon={icon} {...props} />
       {errorMessage && (
         <HelperText color={"failure"}>
           {errorMessage}
         </HelperText>
       )}
     </div>;
-  }
-  ;
 }
 // const TextField: FC<TextFieldProps> = ({
 //                                          errorMessage,

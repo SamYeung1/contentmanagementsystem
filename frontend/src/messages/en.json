@@ -24,7 +24,16 @@
       "permission_message": "Permission denied"
     },
     "input": {
-      "search_placeholder": "Search...."
+      "search_placeholder": "Search...",
+      "select_placeholder": "Select Option..."
+    },
+    "button": {
+      "submit": "Submit",
+      "back": "Back"
+    },
+    "error": {
+      "required": "Required",
+      "invalid_email": "Invalid Email"
     }
   }
 }

@@ -1,0 +1,170 @@
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { Checkbox, CloseIcon, HelperText, Label, TextInput } from 'flowbite-react';
+import { SearchIcon } from 'lucide-react';
+import { useTranslations } from 'use-intl';
+import { debounce } from '@/lib/util';
+
+export interface Option {
+  value: string;
+  label?: string;
+}
+
+
+interface MultiSelectProps {
+  options: Option[];
+  label?: string;
+  name: string;
+  errorMessage?: string;
+  defaultValue?: string[];
+  serverMode?: boolean;
+  onSearch?: (query: string) => void;
+}
+
+export default function MultiSelectField({
+                                           name,
+                                           options,
+                                           defaultValue = [],
+                                           errorMessage,
+                                           label = 'Select Options',
+                                           onSearch,
+                                           serverMode,
+                                         }: MultiSelectProps) {
+  const t = useTranslations();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selected, setSelected] = useState<Option[]>(() =>
+    options.filter(opt => defaultValue.includes(opt.value)),
+  );
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredOptions = useMemo(() => {
+    if (serverMode === true) return options;
+    return options.filter((opt) =>
+      (opt.label || opt.value).toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }, [options, searchTerm]);
+  const debouncedSearch = useMemo(
+    () => debounce((query: string) => onSearch?.(query)),
+    [onSearch]
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setSearchTerm('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  useEffect(() => {
+    if (serverMode) {
+      debouncedSearch(searchTerm);
+    }
+  }, [searchTerm, serverMode, debouncedSearch]);
+
+  const toggleOption = useCallback((option: Option) => {
+    const newSelected = selected.some((item) => item.value === option.value)
+      ? selected.filter((item) => item.value !== option.value)
+      : [...selected, option];
+
+    setSelected(newSelected);
+  }, [selected]);
+
+  const removeOption = (optionValue: string) => {
+    setSelected((prev) => prev.filter((item) => item.value !== optionValue));
+  };
+
+  return (
+    <div className="w-full">
+      <div className="mb-2 block">
+        <Label>{label}</Label>
+      </div>
+      <select
+        name={name}
+        multiple
+        className="hidden"
+        value={selected.map(s => s.value)}
+      >
+        {options.map(opt => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <div className="relative" ref={dropdownRef}>
+        <div
+          className={`flex flex-wrap items-center justify-between w-full p-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-pointer ${
+            isOpen ? 'ring-1 ring-blue-500 border-blue-500' : ''
+          }`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <div className="flex flex-wrap gap-2">
+            {selected.length === 0 ? (
+              <span className="text-gray-500 dark:text-gray-400">{t('Common.input.select_placeholder')}</span>
+            ) : (
+              selected.map((option) => (
+                <span
+                  key={option.value}
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300"
+                >
+                  {options.find((item) => item.value === option.value)?.label}
+                  <button
+                    type="button"
+                    className="inline-flex items-center p-0.5 ml-2 text-sm text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeOption(option.value);
+                    }}
+                  >
+                    <CloseIcon />
+                  </button>
+                </span>
+              ))
+            )}
+          </div>
+
+          <div className="text-gray-500">
+            <svg className={`w-4 h-4 text-gray-800 dark:text-white transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                 width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="m19 9-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Dropdown Menu */}
+        {isOpen && (
+          <div
+            className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow dark:bg-gray-700 dark:border-gray-600">
+            <TextInput value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} icon={SearchIcon}
+                       placeholder={t('Common.input.search_placeholder')} />
+            <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <li key={option.value}
+                      className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer"
+                      onClick={() => toggleOption(option)}>
+                    <Checkbox
+                      checked={selected.some(item => item.value === option.value)}
+                      readOnly
+                    />
+                    <span className="ml-2 w-full">{option.label}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="p-2 text-center text-gray-500">{t('Common.no_results')}</li>
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
+      {errorMessage && (
+        <HelperText color={'failure'}>
+          {errorMessage}
+        </HelperText>
+      )}
+    </div>
+  );
+};
