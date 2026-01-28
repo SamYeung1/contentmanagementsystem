@@ -17,7 +17,7 @@ import { PagingResultDto } from '../../common/dto';
 import { RoleEntity, UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
 import { RoleService } from './role.service';
-import { Role } from '../../common/decorator/role.decorator';
+import { Role } from '../../common/decorator';
 import { ListQueryDto } from '../../common/dto/list-query.dto';
 
 @Role("role")
