@@ -9,6 +9,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { Serialize } from '../../common/interceptor';
 import { CurrentUserResponseDto } from './dto/current-user-response.dto';
+import { NoRole } from '../../common/decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +35,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @NoRole()
   @Serialize(CurrentUserResponseDto)
   async currentUser(@CurrentUser() currentUser: UserEntity): Promise<CurrentUserResponseDto> {
     return new CurrentUserResponseDto(currentUser);

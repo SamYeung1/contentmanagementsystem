@@ -7,8 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PermissionModule } from './cms/permission/permission.module';
 import { RoleModule } from './cms/role/role.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './common/guard';
-import { RoleGuard } from './common/guard/role.guard';
+import { AuthGuard,RoleGuard } from './common/guard';
 
 @Module({
   imports: [

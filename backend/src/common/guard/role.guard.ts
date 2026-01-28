@@ -1,8 +1,7 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserEntity } from '../../database/entities';
-import { IS_PUBLIC_KEY } from '../decorator';
-import { META_KEY, Role } from '../decorator/role.decorator';
+import { IS_PUBLIC_KEY ,META_KEY,IS_NO_ROLE_KEY} from '../decorator';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -23,11 +22,14 @@ export class RoleGuard implements CanActivate {
       IS_PUBLIC_KEY,
       context.getHandler(),
     );
-    if (isPublic) return true;
+    const isNoRole = this.reflector.get<boolean>(
+      IS_NO_ROLE_KEY,
+      context.getHandler());
+    if (isPublic || isNoRole) return true;
     const roleResource = Reflect.getMetadata(META_KEY, context.getClass());
     const request = context.switchToHttp().getRequest<Request & { user?: UserEntity }>();
     const currentUser = request?.user as UserEntity;
-    if(currentUser.isRootUser) return true;
+    if (currentUser.isRootUser) return true;
     const permissions = currentUser.roles.flatMap(
       (role) => role.permissions.map((permission) => {
         const match = PERMISSION_REGEX.exec(permission.action);
