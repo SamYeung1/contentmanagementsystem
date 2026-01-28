@@ -31,7 +31,7 @@ export default function DataTableHeader({ leftRender, addButton, onSearch }: Dat
         onSearchRef.current(value);
       }
     }),
-    [] // No dependencies needed! The timer never resets accidentally.
+    []
   );
   return <div className="flex items-center justify-between">
     <div>

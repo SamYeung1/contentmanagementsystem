@@ -40,7 +40,7 @@ export const actionLogin = async (initialState: any, formData: FormData): Promis
     return { serverError: { success: true, message: '' } };
   } catch (error) {
     if (error instanceof AuthException) {
-      return { serverError: { success: false, message: t('auth_error') } };
+      return { serverError: { success: false, message: t('Common.alert.auth_error') } };
     }
     console.error(error);
   }

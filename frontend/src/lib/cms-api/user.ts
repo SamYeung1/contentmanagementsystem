@@ -1,10 +1,10 @@
 import AuthException from '@/exception/api/auth-exception';
 import PageResponse from '@/type/base/page-response';
-import Role from '@/type/cms/role';
 import By from '@/type/base/by';
 import Direction from '@/type/base/direction';
 import { getCurrentUser } from '@/lib/user-session';
 import { API, PAGINATION_OPTIONS } from '@/config/setting';
+import { Role } from '@/type/cms';
 
 interface UserResponse {
   id: number;
@@ -22,6 +22,16 @@ interface UserRequest {
   search?: string | null;
   page?: number | null;
   listAll?: boolean;
+}
+
+export interface UserCreateRequest {
+  email: string;
+  password:string;
+  name:string;
+  roles: string[];
+}
+export interface UserEditRequest extends Omit<UserCreateRequest,'password'>{
+  password?: string;
 }
 
 export async function list(input: UserRequest): Promise<PageResponse<UserResponse>> {
@@ -54,6 +64,31 @@ export async function list(input: UserRequest): Promise<PageResponse<UserRespons
   return result as PageResponse<UserResponse>;
 }
 
+export async function create(input: UserCreateRequest): Promise<UserResponse> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
+  const res = await fetch(
+    `${process.env.CMS_API_BASE_URL}/users`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearerToken}`,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+  if (res.status === 401) {
+    throw new AuthException();
+  }
+
+  const result = await res.json();
+
+  if (!result) {
+    throw new AuthException();
+  }
+  return result as UserResponse;
+}
+
 export async function get(id: string): Promise<UserResponse> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
@@ -64,6 +99,31 @@ export async function get(id: string): Promise<UserResponse> {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${bearerToken}`,
       },
+    },
+  );
+  if (res.status === 401) {
+    throw new AuthException();
+  }
+
+  const result = await res.json();
+
+  if (!result) {
+    throw new AuthException();
+  }
+  return result as UserResponse;
+}
+
+export async function edit(id:string,input: UserEditRequest): Promise<UserResponse> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
+  const res = await fetch(
+    `${process.env.CMS_API_BASE_URL}/users/${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearerToken}`,
+      },
+      body: JSON.stringify(input),
     },
   );
   if (res.status === 401) {

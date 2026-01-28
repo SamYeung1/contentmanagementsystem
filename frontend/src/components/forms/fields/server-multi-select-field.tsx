@@ -9,6 +9,7 @@ interface ServerMultiSelectFieldProps {
   url: string;
   textMapper: (item: any) => Option;
   onSelected?:(value: Option[]) => void;
+  dependOnQuery?: boolean;
 }
 
 export default function ServerMultiSelectField({
@@ -18,12 +19,17 @@ export default function ServerMultiSelectField({
                                                  errorMessage,
                                                  textMapper,
                                                  onSelected,
+                                                 dependOnQuery = false
                                                }: ServerMultiSelectFieldProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [list, setList] = useState<Option[]>([]);
   const [query, setQuery] = useState<string>(''); // Track search query
 
   useEffect(() => {
+    if(dependOnQuery && query.length === 0){
+      setList([]);
+      return;
+    }
     const controller = new AbortController();
     const params = new URLSearchParams({
       search: query,

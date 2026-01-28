@@ -1,4 +1,4 @@
-import { Detail } from '@/type/base/detail';
+import Detail from '@/type/base/detail';
 
 export interface NavigationItem {
   id: number;

@@ -64,7 +64,9 @@ export default function MultiSelectField({
       debouncedSearch(searchTerm);
     }
   }, [searchTerm, serverMode, debouncedSearch]);
+  useEffect(() => {
 
+  }, [selected]);
   const toggleOption = useCallback((option: Option) => {
     const newSelected = selected.some((item) => item.value === option.value)
       ? selected.filter((item) => item.value !== option.value)
@@ -73,16 +75,14 @@ export default function MultiSelectField({
     if (onSelected) {
       onSelected(newSelected);
     }
-  }, [selected]);
+  }, [selected, onSelected]);
 
   const removeOption = (optionValue: string) => {
-    setSelected((prev) => {
-      const newSelected = prev.filter((item) => item.value !== optionValue);
-      if (onSelected) {
-        onSelected(newSelected);
-      }
-      return newSelected;
-    });
+    const newSelected = selected.filter((item) => item.value !== optionValue);
+    setSelected(newSelected); // 1. Update local
+    if (onSelected) {
+      onSelected(newSelected); // 2. Call parent (Outside the setter!)
+    }
   };
   return (
     <div className="w-full">
@@ -139,24 +139,28 @@ export default function MultiSelectField({
                        icon={SearchIcon}
                        placeholder={t('Common.input.search_placeholder')} />
             {(serverMode && serverModeOption?.isLoading) ? <div className="flex justify-center p-2"><Spinner /></div>
-              : <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
-                {filteredOptions.length > 0 ? (
-                  filteredOptions.map((option) => (
-                    <li key={option.value}
-                        className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer"
-                        onClick={() => toggleOption(option)}>
-                      <Checkbox
-                        checked={selected.some(item => item.value == option.value)}
-                        readOnly
-                      />
-                      <span className="ml-2 w-full">{option.label}</span>
-                    </li>
-                  ))
-                ) : (
-                  <li className="p-2 text-center text-gray-500">{t('Common.input.select_no_result')}</li>
-                )}
-              </ul>
+              : <div className="p-3">
+                <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-200">
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <li key={option.value}
+                          className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer"
+                          onClick={() => toggleOption(option)}>
+                        <Checkbox
+                          checked={selected.some(item => item.value == option.value)}
+                          readOnly
+                        />
+                        <span className="ml-2 w-full">{option.label}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="p-2 text-center text-gray-500">{t('Common.input.select_no_result')}</li>
+                  )}
+                </ul>
+                <HelperText>{t('Common.input.select_search_hint')}</HelperText>
+              </div>
             }
+
           </div>
         )}
       </div>

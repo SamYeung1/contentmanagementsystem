@@ -9,7 +9,10 @@
     "page_title_create": "Create User",
     "button_add_user": "Create user",
     "form": {
-
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "roles": "Roles"
     }
   },
   "DashboardPage": {
@@ -21,20 +24,28 @@
   },
   "Common": {
     "alert": {
-      "permission_message": "Permission denied"
+      "permission_message": "Permission denied",
+      "auth_error": "Email or password invalid"
     },
     "input": {
       "search_placeholder": "Search...",
       "select_placeholder": "Select Option...",
-      "select_no_result": "No result"
+      "select_no_result": "No result",
+      "select_search_hint": "Type it to search"
     },
     "button": {
       "submit": "Submit",
-      "back": "Back"
+      "back": "Back",
+      "confirm_sure": "Yes, I'm sure",
+      "cancel_sure": "No, cancel"
     },
     "error": {
       "required": "Required",
       "invalid_email": "Invalid Email"
+    },
+    "modal": {
+      "delete_confirm_message": "Are you sure you want to delete this item?",
+      "back_confirm_message": "Are you sure you want to go back? Unsaved changes will be lost."
     }
   }
 }
