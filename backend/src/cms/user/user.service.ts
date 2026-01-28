@@ -33,7 +33,11 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<boolean> {
-    if (!await this.userRepository.findById(parseInt(id))) {
+    const user = await this.userRepository.findById(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('User does not exist');
+    }
+    if(user.isRootUser){
       throw new NotFoundException('User does not exist');
     }
     return this.userRepository.delete(parseInt(id));
