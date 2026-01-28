@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
 import AuthException from '@/exception/api/auth-exception';
 import FormSubmitData from '@/type/base/form-submit-data';
-import { create, edit, UserEditRequest } from '@/lib/cms-api/user';
+import { createUser, editUser, UserEditRequest } from '@/lib/cms-api/user';
 
 const t = await getTranslations();
 const schema = z.object({
@@ -42,7 +42,7 @@ export const actionCreateUser = async (initialState: any, formData: FormData): P
     };
   }
   try {
-    await create({
+    await createUser({
       email: validatedFields.data?.email,
       password: validatedFields.data?.password,
       name: validatedFields.data?.name,
@@ -79,7 +79,7 @@ export const actionEditUser = async (initialState: any, formData: FormData): Pro
     input.password = validatedFields?.data.password;
   }
   try {
-   await edit(validatedFields.data.id, input);
+   await editUser(validatedFields.data.id, input);
     return { serverError: { success: true, message: '' } };
   } catch (error) {
     if (error instanceof AuthException) {

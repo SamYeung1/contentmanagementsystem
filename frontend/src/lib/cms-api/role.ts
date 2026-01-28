@@ -5,6 +5,7 @@ import Direction from '@/type/base/direction';
 import { getCurrentUser } from '@/lib/user-session';
 import { API, PAGINATION_OPTIONS } from '@/config/setting';
 import { Permission } from '@/type/cms';
+import ApiException from '@/exception/api/api-exception';
 
 interface RoleResponse {
   id: number;
@@ -24,7 +25,7 @@ interface RoleRequest {
 }
 
 
-export async function list(input: RoleRequest): Promise<PageResponse<RoleResponse>> {
+export async function listUser(input: RoleRequest): Promise<PageResponse<RoleResponse>> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   let url = `${API.CMS_API}/roles?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
   if (input.search !== null && input.search !== undefined) {
@@ -46,15 +47,14 @@ export async function list(input: RoleRequest): Promise<PageResponse<RoleRespons
   if (res.status === 401) {
     throw new AuthException();
   }
-  const result = await res.json();
-
-  if (!result) {
-    throw new AuthException();
+  if(!res.ok) {
+    throw new ApiException();
   }
+  const result = await res.json();
   return result as PageResponse<RoleResponse>;
 }
 
-export async function get(id: string): Promise<RoleResponse> {
+export async function getUser(id: string): Promise<RoleResponse> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
     `${process.env.CMS_API_BASE_URL}/roles/${id}`,
@@ -69,11 +69,10 @@ export async function get(id: string): Promise<RoleResponse> {
   if (res.status === 401) {
     throw new AuthException();
   }
-
+  if(!res.ok) {
+    throw new ApiException();
+  }
   const result = await res.json();
 
-  if (!result) {
-    throw new AuthException();
-  }
   return result as RoleResponse;
 }

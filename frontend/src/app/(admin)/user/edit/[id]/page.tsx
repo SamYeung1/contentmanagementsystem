@@ -2,7 +2,7 @@ import { BreadcrumbItem } from '@/components/layouts/cms/base/cms-breadcrumb';
 import CmsMain from '@/components/layouts/cms/cms-main';
 import { UserForm } from '@/app/(admin)/user/form/user-form';
 import { getTranslations } from 'next-intl/server';
-import { get } from '@/lib/cms-api/user';
+import { getUser } from '@/lib/cms-api/user';
 import { Option } from '@/components/forms/fields/multi-select-field';
 
 export default async function UserPageEdit({ params }: PageProps<'/user/edit/[id]'>) {
@@ -13,7 +13,7 @@ export default async function UserPageEdit({ params }: PageProps<'/user/edit/[id
     { text: t('UserPage.page_title'), href: '/user' },
     { text: t('UserPage.page_title_edit') },
   ];
-  const result = await get(id);
+  const result = await getUser(id);
   const roles = result.roles.map((item) => ({
     value: item.id,
     label: item.name

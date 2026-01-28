@@ -1,6 +1,6 @@
 'use server';
 import { NextRequest } from 'next/server';
-import { list, get } from '@/lib/cms-api/role';
+import { listUser, getUser } from '@/lib/cms-api/role';
 import Direction from '@/type/base/direction';
 
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/role/[[...id]]'>) {
@@ -14,9 +14,9 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/role/[[...id
   const search = searchParams.has('search') ? searchParams.get('search') : null;
   const { id } = await ctx.params;
   if (id) {
-    return Response.json(await get(id[0]));
+    return Response.json(await getUser(id[0]));
   } else {
-    return Response.json(await list({ page: page, orderBy: orderBy as Direction, search: search,listAll:listAll }));
+    return Response.json(await listUser({ page: page, orderBy: orderBy as Direction, search: search,listAll:listAll }));
   }
 
 }

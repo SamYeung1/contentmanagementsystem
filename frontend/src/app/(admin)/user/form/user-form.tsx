@@ -25,7 +25,7 @@ export function UserForm({ editMode, initValue }: UserFormProps) {
       initValue?.roles?.map(r => r.value) || [],
     [initValue],
   );
-  const [roleIds, setRoleIds] = useState<string[]>(initialRoleIds);
+  const [roleIds, setRoleIds] = useState(initialRoleIds);
   const [state, formAction, pending] = useActionState(editMode ? actionEditUser : actionCreateUser, {
     initValue: {
       id:initValue?.id,
@@ -35,7 +35,7 @@ export function UserForm({ editMode, initValue }: UserFormProps) {
       password: '',
     } as SubmitModel,
   });
-  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const router = useRouter();
   useEffect(() => {
     if (state?.serverError?.success === true) {
