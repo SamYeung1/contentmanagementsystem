@@ -4,20 +4,20 @@ import { isPageResponse } from '@/lib/util';
 
 interface ServerMultiSelectFieldProps {
   label?: string;
-  name: string;
   errorMessage?: string;
-  defaultValue?: string[];
+  defaultValue?: Option[];
   url: string;
   textMapper: (item: any) => Option;
+  onSelected?:(value: Option[]) => void;
 }
 
 export default function ServerMultiSelectField({
-                                                 name,
                                                  url,
                                                  label,
                                                  defaultValue,
                                                  errorMessage,
                                                  textMapper,
+                                                 onSelected,
                                                }: ServerMultiSelectFieldProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [list, setList] = useState<Option[]>([]);
@@ -51,11 +51,11 @@ export default function ServerMultiSelectField({
   return (
     <MultiSelectField
       options={list}
-      name={name}
       label={label}
       defaultValue={defaultValue}
       errorMessage={errorMessage}
       serverMode={true}
+      onSelected={onSelected}
       serverModeOption={{
         isLoading: loading,
         onSearch: (value) => setQuery(value),

@@ -13,11 +13,11 @@ export interface Option {
 interface MultiSelectProps {
   options: Option[];
   label?: string;
-  name: string;
   errorMessage?: string;
-  defaultValue?: string[];
+  defaultValue?: Option[];
   serverMode?: boolean;
   serverModeOption?: ServerModeOption;
+  onSelected?: (value: Option[]) => void;
 }
 
 export interface ServerModeOption {
@@ -26,19 +26,17 @@ export interface ServerModeOption {
 }
 
 export default function MultiSelectField({
-                                           name,
                                            options,
                                            defaultValue = [],
                                            errorMessage,
                                            label = 'Select Options',
                                            serverModeOption,
                                            serverMode,
+                                           onSelected,
                                          }: MultiSelectProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selected, setSelected] = useState<Option[]>(() =>
-    options.filter(opt => defaultValue.includes(opt.value)),
-  );
+  const [selected, setSelected] = useState<Option[]>(defaultValue);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const filteredOptions = useMemo(() => {
@@ -51,7 +49,6 @@ export default function MultiSelectField({
     () => debounce((query: string) => serverModeOption?.onSearch?.(query)),
     [serverModeOption?.onSearch],
   );
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -72,31 +69,26 @@ export default function MultiSelectField({
     const newSelected = selected.some((item) => item.value === option.value)
       ? selected.filter((item) => item.value !== option.value)
       : [...selected, option];
-
     setSelected(newSelected);
+    if (onSelected) {
+      onSelected(newSelected);
+    }
   }, [selected]);
 
   const removeOption = (optionValue: string) => {
-    setSelected((prev) => prev.filter((item) => item.value !== optionValue));
+    setSelected((prev) => {
+      const newSelected = prev.filter((item) => item.value !== optionValue);
+      if (onSelected) {
+        onSelected(newSelected);
+      }
+      return newSelected;
+    });
   };
-
   return (
     <div className="w-full">
       <div className="mb-2 block">
         <Label>{label}</Label>
       </div>
-      <select
-        name={name}
-        multiple
-        className="hidden"
-        value={selected.map(s => s.value)}
-      >
-        {selected.map(opt => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
       <div className="relative" ref={dropdownRef}>
         <div
           className={`flex flex-wrap items-center justify-between w-full p-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-pointer ${
@@ -143,7 +135,8 @@ export default function MultiSelectField({
         {isOpen && (
           <div
             className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow dark:bg-gray-700 dark:border-gray-600">
-            <TextInput type='search' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} icon={SearchIcon}
+            <TextInput type="search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                       icon={SearchIcon}
                        placeholder={t('Common.input.search_placeholder')} />
             {(serverMode && serverModeOption?.isLoading) ? <div className="flex justify-center p-2"><Spinner /></div>
               : <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
@@ -153,7 +146,7 @@ export default function MultiSelectField({
                         className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer"
                         onClick={() => toggleOption(option)}>
                       <Checkbox
-                        checked={selected.some(item => item.value === option.value)}
+                        checked={selected.some(item => item.value == option.value)}
                         readOnly
                       />
                       <span className="ml-2 w-full">{option.label}</span>

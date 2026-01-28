@@ -5,4 +5,5 @@ export default interface FormSubmitData<T> {
     success: boolean,
     message: string
   },
+  payload?: FormData
 }
