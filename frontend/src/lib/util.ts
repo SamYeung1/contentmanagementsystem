@@ -1,6 +1,9 @@
 import { PERMISSION_OPTIONS } from '@/config/setting';
 import { CurrentUserResponse } from '@/lib/cms-api/auth';
 import PageResponse from '@/type/base/page-response';
+import AuthException from '@/exception/api/auth-exception';
+import PermissionException from '@/exception/api/permission-exception';
+import ApiException from '@/exception/api/api-exception';
 
 export const debounce = <T extends unknown[]>(
   callback: (...args: T) => void,
@@ -35,4 +38,15 @@ export function isPageResponse(data: any): data is PageResponse<any> {
     typeof data.total === 'number' &&
     Array.isArray(data.results)
   );
+}
+export function handleError(res: Response) {
+  if (res.status === 401) {
+    throw new AuthException();
+  }
+  if (res.status === 403) {
+    throw new PermissionException();
+  }
+  if (!res.ok) {
+    throw new ApiException();
+  }
 }

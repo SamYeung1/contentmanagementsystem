@@ -1,11 +1,10 @@
-import AuthException from '@/exception/api/auth-exception';
 import PageResponse from '@/type/base/page-response';
 import By from '@/type/base/by';
 import Direction from '@/type/base/direction';
 import { getCurrentUser } from '@/lib/user-session';
 import { API, PAGINATION_OPTIONS } from '@/config/setting';
 import { Permission } from '@/type/cms';
-import ApiException from '@/exception/api/api-exception';
+import { handleError } from '@/lib/util';
 
 interface RoleResponse {
   id: number;
@@ -23,7 +22,6 @@ interface RoleRequest {
   page?: number | null;
   listAll?: boolean;
 }
-
 
 export async function listUser(input: RoleRequest): Promise<PageResponse<RoleResponse>> {
   const bearerToken: string = (await getCurrentUser()).access_token;
@@ -44,12 +42,7 @@ export async function listUser(input: RoleRequest): Promise<PageResponse<RoleRes
       },
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
-    throw new ApiException();
-  }
+  handleError(res);
   const result = await res.json();
   return result as PageResponse<RoleResponse>;
 }
@@ -66,12 +59,7 @@ export async function getUser(id: string): Promise<RoleResponse> {
       },
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
-    throw new ApiException();
-  }
+  handleError(res);
   const result = await res.json();
 
   return result as RoleResponse;

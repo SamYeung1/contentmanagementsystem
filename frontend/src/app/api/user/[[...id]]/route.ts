@@ -2,7 +2,14 @@
 import { NextRequest } from 'next/server';
 import { listUser, getUser, deleteUser } from '@/lib/cms-api/user';
 import Direction from '@/type/base/direction';
+import PermissionException from '@/exception/api/permission-exception';
 
+function handleError(e:unknown){
+  if(e instanceof PermissionException){
+    return Response.json({}, { status: 403 });
+  }
+  return Response.json({}, { status: 404 });
+}
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/user/[[...id]]'>) {
   const searchParams = req.nextUrl.searchParams;
   const page = searchParams.has('page') ? parseInt(searchParams.get('page')!) : null;
@@ -25,7 +32,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/user/[[...id
       }));
     }
   } catch (e) {
-    return Response.json({}, { status: 404 });
+    return handleError(e);
   }
 }
 
@@ -38,7 +45,7 @@ export async function DELETE(req: NextRequest, ctx: RouteContext<'/api/user/[[..
       return Response.json({}, { status: 404 });
     }
   }catch (e) {
-    return Response.json({}, { status: 500 });
+    return handleError(e);
   }
 
 }

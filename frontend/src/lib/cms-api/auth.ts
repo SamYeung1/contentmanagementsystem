@@ -1,6 +1,7 @@
 import AuthException from '@/exception/api/auth-exception';
 import { getCurrentUser } from '@/lib/user-session';
 import { API } from '@/config/setting';
+import { handleError } from '@/lib/util';
 
 export interface LoginResponse {
   access_token: string;
@@ -28,7 +29,6 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
-
 export async function login(input: LoginRequest): Promise<LoginResponse> {
   const res = await fetch(
     `${API.CMS_API}/auth/login`,
@@ -40,9 +40,7 @@ export async function login(input: LoginRequest): Promise<LoginResponse> {
       body: JSON.stringify(input),
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
+  handleError(res);
   const auth = await res.json();
 
   if (!auth) {
@@ -64,9 +62,7 @@ export async function refresh(input: RefreshRequest): Promise<LoginResponse> {
       body: JSON.stringify(input),
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
+  handleError(res);
   const auth = await res.json();
   if (!auth) {
     throw new AuthException();
@@ -88,9 +84,7 @@ export async function currentUser(): Promise<CurrentUserResponse> {
       },
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
+  handleError(res);
   const result = await res.json();
   if (!result) {
     throw new AuthException();

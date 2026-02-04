@@ -6,6 +6,7 @@ import { getCurrentUser } from '@/lib/user-session';
 import { API, PAGINATION_OPTIONS } from '@/config/setting';
 import { Role } from '@/type/cms';
 import ApiException from '@/exception/api/api-exception';
+import { handleError } from '@/lib/util';
 
 interface UserResponse {
   id: number;
@@ -27,11 +28,13 @@ interface UserRequest {
 
 export interface UserCreateRequest {
   email: string;
-  password:string;
-  name:string;
+  password: string;
+  name: string;
   roles: string[];
 }
-export interface UserEditRequest extends Omit<UserCreateRequest,'password'>{
+
+
+export interface UserEditRequest extends Omit<UserCreateRequest, 'password'> {
   password?: string;
 }
 
@@ -54,12 +57,7 @@ export async function listUser(input: UserRequest): Promise<PageResponse<UserRes
       },
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
-    throw new ApiException();
-  }
+  handleError(res);
   const result = await res.json();
   return result as PageResponse<UserResponse>;
 }
@@ -77,12 +75,7 @@ export async function createUser(input: UserCreateRequest): Promise<UserResponse
       body: JSON.stringify(input),
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
-    throw new ApiException();
-  }
+  handleError(res);
   const result = await res.json();
   return result as UserResponse;
 }
@@ -99,12 +92,7 @@ export async function getUser(id: string): Promise<UserResponse> {
       },
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
-    throw new ApiException();
-  }
+  handleError(res);
   const result = await res.json();
 
   if (!result) {
@@ -113,7 +101,7 @@ export async function getUser(id: string): Promise<UserResponse> {
   return result as UserResponse;
 }
 
-export async function editUser(id:string, input: UserEditRequest): Promise<UserResponse> {
+export async function editUser(id: string, input: UserEditRequest): Promise<UserResponse> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
     `${process.env.CMS_API_BASE_URL}/users/${id}`,
@@ -126,16 +114,12 @@ export async function editUser(id:string, input: UserEditRequest): Promise<UserR
       body: JSON.stringify(input),
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
-    throw new ApiException();
-  }
+  handleError(res);
   const result = await res.json();
   return result as UserResponse;
 }
-export async function deleteUser(id:string): Promise<boolean> {
+
+export async function deleteUser(id: string): Promise<boolean> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
     `${process.env.CMS_API_BASE_URL}/users/${id}`,
@@ -147,10 +131,8 @@ export async function deleteUser(id:string): Promise<boolean> {
       },
     },
   );
-  if (res.status === 401) {
-    throw new AuthException();
-  }
-  if(!res.ok) {
+  handleError(res);
+  if (!res.ok) {
     throw new ApiException();
   }
   return true;
