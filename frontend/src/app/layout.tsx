@@ -7,7 +7,7 @@ import React from 'react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={twMerge("bg-gray-50 dark:bg-gray-900")}>
+    <html lang="en" suppressHydrationWarning className={twMerge('bg-gray-50 dark:bg-gray-900')}>
     <head><ThemeModeScript /></head>
     <body>
     <ThemeInit />

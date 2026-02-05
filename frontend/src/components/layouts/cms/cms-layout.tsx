@@ -9,6 +9,7 @@ import { CurrentUserResponse } from '@/lib/cms-api/auth';
 import CurrentUserProvider from '@/context/current-user-context';
 import { ErrorAlert } from '@/components/alert/error-alert';
 import { useTranslations } from 'use-intl';
+import { AlertProvider } from '@/context/alert-context';
 
 interface CMSLayoutProps {
   navigationItems: NavigationItem[];
@@ -18,11 +19,11 @@ interface CMSLayoutProps {
 
 export default function CMSLayout({ user, navigationItems, children }: CMSLayoutProps) {
   const pathname = usePathname() || '';
-  const t = useTranslations('Common')
+  const t = useTranslations('Common');
   const [isOpen, setIsOpen] = useState(false);
   const closeSidebar = () => setIsOpen(false);
   const mobileButtonHandler = () => setIsOpen(!isOpen);
-  return (<CurrentUserProvider user={user}>
+  return (<AlertProvider><CurrentUserProvider user={user}>
       <div className="flex flex-col h-screen">
         <CmsHeader isOpenMenu={isOpen} mobileButtonHandler={mobileButtonHandler} />
         <div className="flex flex-1 pt-16 overflow-hidden">
@@ -40,6 +41,6 @@ export default function CMSLayout({ user, navigationItems, children }: CMSLayout
           </main>
         </div>
       </div>
-    </CurrentUserProvider>
+    </CurrentUserProvider></AlertProvider>
   );
 }
