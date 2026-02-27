@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
@@ -10,6 +10,7 @@ import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { Serialize } from '../../common/interceptor';
 import { CurrentUserResponseDto } from './dto/current-user-response.dto';
 import { NoRole } from '../../common/decorator';
+import { CurrentUserDto } from './dto/current-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,5 +40,12 @@ export class AuthController {
   @Serialize(CurrentUserResponseDto)
   async currentUser(@CurrentUser() currentUser: UserEntity): Promise<CurrentUserResponseDto> {
     return new CurrentUserResponseDto(currentUser);
+  }
+
+  @Put('me')
+  @NoRole()
+  @Serialize(CurrentUserResponseDto)
+  async updateCurrentUser(@CurrentUser() currentUser: UserEntity, @Body() currentUserDto: CurrentUserDto): Promise<CurrentUserResponseDto> {
+    return this.authService.updateCurrentUser(currentUser,currentUserDto);
   }
 }

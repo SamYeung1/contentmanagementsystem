@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, CreateUserResponseDto, UpdateUserDto, UpdateUserResponseDto, GetUserResponseDto } from './dto';
@@ -18,7 +17,7 @@ import {  PagingResult } from '../../common/type';
 import { PagingResultDto } from '../../common/dto';
 import { UserEntity } from '../../database/entities';
 import { CurrentUser } from '../../common/decorator';
-import { Role } from '../../common/decorator/role.decorator';
+import { Role } from '../../common/decorator';
 import { ListQueryDto } from '../../common/dto/list-query.dto';
 
 @Role("user")
