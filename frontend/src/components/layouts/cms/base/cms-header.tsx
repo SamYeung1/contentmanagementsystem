@@ -5,6 +5,7 @@ import React, { JSX } from 'react';
 import ClientOnly from '@/components/client-only';
 import { useTranslations } from 'use-intl';
 import { useCurrentUser } from '@/context/current-user-context';
+import { useRouter } from 'next/navigation';
 
 
 interface CmsHeaderProps {
@@ -15,6 +16,26 @@ interface CmsHeaderProps {
 export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeaderProps): JSX.Element {
   const t = useTranslations('CMSHeader');
   const { user } = useCurrentUser();
+  const router = useRouter();
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        router.push('/login');
+        router.refresh();
+      } else {
+        console.error('Failed to log out');
+      }
+    } catch (error) {
+      console.error('An error occurred during logout:', error);
+    }
+  };
   return <header
     className="fixed top-0 z-50 w-full">
     <Navbar fluid>
@@ -54,9 +75,11 @@ export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeader
               <span className="block text-sm">{user?.name}</span>
               <span className="block truncate text-sm font-medium">{user?.email}</span>
             </DropdownHeader>
-            <DropdownItem icon={Settings}>Settings</DropdownItem>
+            <DropdownItem icon={Settings} onClick={()=>{
+              router.push('user-setting');
+            }}>{t('user_menu.user_setting')}</DropdownItem>
             <DropdownDivider />
-            <DropdownItem icon={LogOut}>Sign out</DropdownItem>
+            <DropdownItem onClick={handleLogout} icon={LogOut}>{t('user_menu.logout')}</DropdownItem>
           </Dropdown>
         </ClientOnly>
       </div>

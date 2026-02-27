@@ -29,6 +29,12 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
+
+export interface UpdateCurrentUserRequest {
+  password?: string;
+  name: string;
+  roles: string[];
+}
 export async function login(input: LoginRequest): Promise<LoginResponse> {
   const res = await fetch(
     `${API.CMS_API}/auth/login`,
@@ -90,4 +96,38 @@ export async function currentUser(): Promise<CurrentUserResponse> {
     throw new AuthException();
   }
   return result as CurrentUserResponse;
+}
+export async function updateCurrentUser(input: UpdateCurrentUserRequest): Promise<CurrentUserResponse> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
+  const res = await fetch(
+    `${API.CMS_API}/auth/me`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearerToken}`,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+  handleError(res);
+  const result = await res.json();
+  if (!result) {
+    throw new AuthException();
+  }
+  return result as CurrentUserResponse;
+}
+export async function logout(): Promise<void> {
+  const refresh_token: string = (await getCurrentUser()).refresh_token;
+  const res = await fetch(
+    `${API.CMS_API}/auth/logout`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh_token }),
+    },
+  );
+  handleError(res);
 }

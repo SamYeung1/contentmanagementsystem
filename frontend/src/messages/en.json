@@ -1,10 +1,22 @@
 {
   "CMSHeader":{
-    "title": "My CMS"
+    "title": "My CMS",
+    "user_menu": {
+      "user_setting": "Setting",
+      "logout": "Logout"
+    }
   },
   "LoginPage": {
     "title": "Admin Portal",
     "auth_error": "Email or Password is invalid"
+  },
+  "UserSettingPage": {
+    "page_title": "User Setting",
+    "form": {
+      "name": "Name",
+      "password": "Password",
+      "roles": "Roles"
+    }
   },
   "UserPage": {
     "page_title": "User",
