@@ -1,8 +1,10 @@
-"use client"
+'use client';
 import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar, NavbarBrand } from 'flowbite-react';
 import { LogOut, Menu, Settings, X } from 'lucide-react';
 import React, { JSX } from 'react';
 import ClientOnly from '@/components/client-only';
+import { useTranslations } from 'use-intl';
+import { useCurrentUser } from '@/context/current-user-context';
 
 
 interface CmsHeaderProps {
@@ -11,6 +13,8 @@ interface CmsHeaderProps {
 }
 
 export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeaderProps): JSX.Element {
+  const t = useTranslations('CMSHeader');
+  const { user } = useCurrentUser();
   return <header
     className="fixed top-0 z-50 w-full">
     <Navbar fluid>
@@ -25,13 +29,8 @@ export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeader
 
         {/* Brand Logo */}
         <NavbarBrand href="/">
-          <img
-            src="https://flowbite.com/docs/images/logo.svg"
-            className="mr-3 h-6 sm:h-9"
-            alt="Flowbite Logo"
-          />
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                MyCMS
+                {t('title')}
               </span>
         </NavbarBrand>
       </div>
@@ -46,15 +45,14 @@ export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeader
             label={
               <Avatar
                 className={'cursor-pointer'}
-                alt="User settings"
                 img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
                 rounded
               />
             }
           >
             <DropdownHeader>
-              <span className="block text-sm">Neil Sims</span>
-              <span className="block truncate text-sm font-medium">neil.sims@flowbite.com</span>
+              <span className="block text-sm">{user?.name}</span>
+              <span className="block truncate text-sm font-medium">{user?.email}</span>
             </DropdownHeader>
             <DropdownItem icon={Settings}>Settings</DropdownItem>
             <DropdownDivider />

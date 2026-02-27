@@ -18,6 +18,7 @@ interface MultiSelectProps {
   serverMode?: boolean;
   serverModeOption?: ServerModeOption;
   onSelected?: (value: Option[]) => void;
+  required:boolean;
 }
 
 export interface ServerModeOption {
@@ -29,6 +30,7 @@ export default function MultiSelectField({
                                            options,
                                            defaultValue = [],
                                            errorMessage,
+                                           required,
                                            label = 'Select Options',
                                            serverModeOption,
                                            serverMode,
@@ -87,7 +89,7 @@ export default function MultiSelectField({
   return (
     <div className="w-full">
       <div className="mb-2 block">
-        <Label>{label}</Label>
+        <Label>{label} {required && <span>*</span>}</Label>
       </div>
       <div className="relative" ref={dropdownRef}>
         <div

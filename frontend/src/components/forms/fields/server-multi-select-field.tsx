@@ -10,10 +10,12 @@ interface ServerMultiSelectFieldProps {
   textMapper: (item: any) => Option;
   onSelected?:(value: Option[]) => void;
   dependOnQuery?: boolean;
+  required:boolean;
 }
 
 export default function ServerMultiSelectField({
                                                  url,
+                                                 required,
                                                  label,
                                                  defaultValue,
                                                  errorMessage,
@@ -57,6 +59,7 @@ export default function ServerMultiSelectField({
   return (
     <MultiSelectField
       options={list}
+      required={required}
       label={label}
       defaultValue={defaultValue}
       errorMessage={errorMessage}

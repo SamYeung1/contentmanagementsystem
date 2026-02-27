@@ -58,7 +58,7 @@ export function UserForm({ editMode, initValue }: UserFormProps) {
                  errorMessage={state.errors ? state.errors['password']?.join(', ') : null}
                  label={t('UserPage.form.password')} name={'password'}
                  type={'password'} />
-      <ServerMultiSelectField dependOnQuery={true} label={t('UserPage.form.roles')} defaultValue={initValue?.roles}
+      <ServerMultiSelectField required dependOnQuery={true} label={t('UserPage.form.roles')} defaultValue={initValue?.roles}
                               onSelected={(options) => {
                                 const newIds = options.map(item => item.value);
                                 setRoleIds(prev => {

@@ -10,7 +10,7 @@ interface TextFieldProps extends TextInputProps {
 export default function TextField({errorMessage, icon, label, name, ...props }: TextFieldProps) {
     return <div>
       <div className="mb-2 block">
-        <Label htmlFor={name}>{label}</Label>
+        <Label htmlFor={name}>{label} {props.required && <span>*</span>}</Label>
       </div>
       <TextInput id={name} className={'mt-2'} name={name} icon={icon} {...props} />
       {errorMessage && (

@@ -1,4 +1,7 @@
 {
+  "CMSHeader":{
+    "title": "My CMS"
+  },
   "LoginPage": {
     "title": "Admin Portal",
     "auth_error": "Email or Password is invalid"
