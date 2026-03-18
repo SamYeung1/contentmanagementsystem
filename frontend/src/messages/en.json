@@ -2,7 +2,7 @@
   "CMSHeader":{
     "title": "My CMS",
     "user_menu": {
-      "user_setting": "Setting",
+      "setting": "Setting",
       "logout": "Logout"
     }
   },
@@ -15,7 +15,8 @@
     "form": {
       "name": "Name",
       "password": "Password",
-      "roles": "Roles"
+      "roles": "Roles",
+      "password_confirm": "Confirm New Password"
     }
   },
   "UserPage": {
@@ -57,7 +58,8 @@
     },
     "error": {
       "required": "Required",
-      "invalid_email": "Invalid Email"
+      "invalid_email": "Invalid Email",
+      "password_not_match": "Passwords don't match"
     },
     "modal": {
       "delete_confirm_message": "Are you sure you want to delete this item?",

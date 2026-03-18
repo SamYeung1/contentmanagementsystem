@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation';
 import { LoadingModel } from '@/components/modal/loading-modal';
 import { Option } from '@/components/forms/fields/multi-select-field';
 import { useAlert } from '@/context/alert-context';
-import { actionUpdateCurrentUser, SubmitModel } from '@/app/(admin)/user-setting/form-action/manage';
+import { actionUpdateCurrentUserSetting, SubmitModel } from '@/app/(admin)/setting/form-action/manage';
 
-interface SubmitModelEdit extends Omit<SubmitModel, 'roles' | 'password'> {
+interface SubmitModelEdit extends Omit<SubmitModel, 'roles' | 'password' | 'password_confirm'> {
   roles: Option[];
 }
 interface UserSettingFormProps {
@@ -25,7 +25,7 @@ export function UserSettingForm({initValue }: UserSettingFormProps) {
     [initValue],
   );
   const [roleIds, setRoleIds] = useState(initialRoleIds);
-  const [state, formAction, pending] = useActionState(actionUpdateCurrentUser, {
+  const [state, formAction, pending] = useActionState(actionUpdateCurrentUserSetting, {
     initValue: {
       roles: initialRoleIds,
       name: initValue?.name,
@@ -46,10 +46,6 @@ export function UserSettingForm({initValue }: UserSettingFormProps) {
       <TextField required defaultValue={state.payload?.get('name') as string || initValue?.name}
                  errorMessage={state.errors ? state.errors['name']?.join(', ') : null}
                  label={t('UserSettingPage.form.name')} name={'name'} />
-      <TextField defaultValue={state.payload?.get('password') as string}
-                 errorMessage={state.errors ? state.errors['password']?.join(', ') : null}
-                 label={t('UserSettingPage.form.password')} name={'password'}
-                 type={'password'} />
       <ServerMultiSelectField required dependOnQuery={true} label={t('UserSettingPage.form.roles')} defaultValue={initValue?.roles}
                               onSelected={(options) => {
                                 const newIds = options.map(item => item.value);
@@ -61,6 +57,14 @@ export function UserSettingForm({initValue }: UserSettingFormProps) {
                               }} errorMessage={state.errors ? state.errors['roles']?.join(', ') : null}
                               textMapper={(item) => ({ value: item.id, label: `${item.id} - ${item.name}` })}
                               url={'/api/role'} />
+      <TextField
+        errorMessage={state.errors ? state.errors['password']?.join(', ') : null}
+        label={t('UserSettingPage.form.password')} name={'password'}
+        type={'password'} />
+      <TextField
+        errorMessage={state.errors ? state.errors['password_confirm']?.join(', ') : null}
+        label={t('UserSettingPage.form.password_confirm')} name={'password_confirm'}
+        type={'password'} />
       <ul className={'hidden'}>{roleIds.map((item, index) => (
         <li key={`li-input-roles-${index}`}><input defaultValue={item} name={'roles'} /></li>))}</ul>
       <div className="md:col-span-2">

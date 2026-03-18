@@ -2,6 +2,7 @@ import AuthException from '@/exception/api/auth-exception';
 import { getCurrentUser } from '@/lib/user-session';
 import { API } from '@/config/setting';
 import { handleError } from '@/lib/util';
+import { Role } from '@/type/cms';
 
 export interface LoginResponse {
   access_token: string;
@@ -34,6 +35,12 @@ export interface UpdateCurrentUserRequest {
   password?: string;
   name: string;
   roles: string[];
+}
+export interface GetCurrentUserResponse {
+  id: number;
+  email: string;
+  name: string;
+  roles: Role[];
 }
 export async function login(input: LoginRequest): Promise<LoginResponse> {
   const res = await fetch(
@@ -97,10 +104,10 @@ export async function currentUser(): Promise<CurrentUserResponse> {
   }
   return result as CurrentUserResponse;
 }
-export async function updateCurrentUser(input: UpdateCurrentUserRequest): Promise<CurrentUserResponse> {
+export async function updateCurrentUserSetting(input: UpdateCurrentUserRequest): Promise<void> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
-    `${API.CMS_API}/auth/me`,
+    `${API.CMS_API}/auth/me/setting`,
     {
       method: 'PUT',
       headers: {
@@ -111,11 +118,6 @@ export async function updateCurrentUser(input: UpdateCurrentUserRequest): Promis
     },
   );
   handleError(res);
-  const result = await res.json();
-  if (!result) {
-    throw new AuthException();
-  }
-  return result as CurrentUserResponse;
 }
 export async function logout(): Promise<void> {
   const refresh_token: string = (await getCurrentUser()).refresh_token;
@@ -130,4 +132,23 @@ export async function logout(): Promise<void> {
     },
   );
   handleError(res);
+}
+export async function getCurrentUserSetting(): Promise<GetCurrentUserResponse> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
+  const res = await fetch(
+    `${API.CMS_API}/auth/me/setting`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearerToken}`,
+      },
+    },
+  );
+  handleError(res);
+  const result = await res.json();
+  if (!result) {
+    throw new AuthException();
+  }
+  return result as GetCurrentUserResponse;
 }

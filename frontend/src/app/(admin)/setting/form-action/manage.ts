@@ -3,26 +3,40 @@ import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
 import FormSubmitData from '@/type/base/form-submit-data';
 import { handleErrorForm } from '@/lib/util';
-import { UpdateCurrentUserRequest, updateCurrentUser } from '@/lib/cms-api/auth';
+import { UpdateCurrentUserRequest, updateCurrentUserSetting } from '@/lib/cms-api/auth';
 
 const t = await getTranslations();
 const schemaForEdit = z.object({
   password: z.string().trim().optional(),
+  password_confirm: z.string().trim().optional(),
   name: z.string().trim().nonempty(t('Common.error.required')),
   roles: z.array(z.string()).nonempty(t('Common.error.required')),
-});
+}).refine((val) => {
+    if(val.password){
+      return val.password === val.password_confirm;
+    }else{
+      return true;
+    }
+  },{
+    message: t('Common.error.password_not_match'),
+    path: ["password_confirm"],
+  }
+);
 
 export interface SubmitModel {
   password: string;
+  password_confirm:string;
   name: string;
   roles: string[];
 }
 
-export const actionUpdateCurrentUser = async (initialState: any, formData: FormData): Promise<FormSubmitData<SubmitModel>> => {
+export const actionUpdateCurrentUserSetting = async (initialState: any, formData: FormData): Promise<FormSubmitData<SubmitModel>> => {
   const validatedFields = schemaForEdit.safeParse({
     password: formData.get('password'),
+    password_confirm: formData.get('password_confirm'),
     name: formData.get('name'),
     roles: formData.getAll('roles'),
+
   });
   if (!validatedFields.success) {
     return {
@@ -38,7 +52,7 @@ export const actionUpdateCurrentUser = async (initialState: any, formData: FormD
     input.password = validatedFields?.data.password;
   }
   try {
-    await updateCurrentUser(input);
+    await updateCurrentUserSetting(input);
     return { serverError: { success: true, message: '' } };
   } catch (error) {
     return handleErrorForm(error, t, formData);

@@ -76,8 +76,8 @@ export default function CmsHeader({ isOpenMenu, mobileButtonHandler }: CmsHeader
               <span className="block truncate text-sm font-medium">{user?.email}</span>
             </DropdownHeader>
             <DropdownItem icon={Settings} onClick={()=>{
-              router.push('user-setting');
-            }}>{t('user_menu.user_setting')}</DropdownItem>
+              router.push('setting');
+            }}>{t('user_menu.setting')}</DropdownItem>
             <DropdownDivider />
             <DropdownItem onClick={handleLogout} icon={LogOut}>{t('user_menu.logout')}</DropdownItem>
           </Dropdown>
