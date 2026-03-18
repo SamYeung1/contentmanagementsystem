@@ -14,9 +14,10 @@ import * as fs from 'fs';
 import { RefreshDto } from './dto/refresh.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { LogoutDto } from './dto/logout.dto';
-import { CurrentUserDto } from './dto/current-user.dto';
+import { CurrentUserSettingDto } from './dto/current-user-setting.dto';
 import { In } from 'typeorm';
-import { CurrentUserResponseDto } from './dto/current-user-response.dto';
+import { CurrentUserSettingResponseDto } from './dto/current-user-setting-response.dto';
+import { GetRoleResponseDto } from '../role/dto';
 
 interface DecryptedToken {
   jti: string;
@@ -119,16 +120,25 @@ export class AuthService {
     await this.userAuthRepository.delete(userAuth.tokenId);
   }
 
-  async updateCurrentUser(currentUser: UserEntity, currentUserDto: CurrentUserDto): Promise<CurrentUserResponseDto> {
+  async updateCurrentUserSetting(currentUser: UserEntity, currentUserSettingDto: CurrentUserSettingDto): Promise<boolean> {
     const userEntity = new UserEntity({
-      name: currentUserDto.name,
-      password: currentUserDto.password,
+      name: currentUserSettingDto.name,
+      password: currentUserSettingDto.password,
       updatedBy: currentUser,
     });
-    if (currentUserDto.roles) {
-      const roles: RoleEntity[] = await this.roleRepository.findBy({ id: In(currentUserDto.roles) }, {});
+    if (currentUserSettingDto.roles) {
+      const roles: RoleEntity[] = await this.roleRepository.findBy({ id: In(currentUserSettingDto.roles) }, {});
       userEntity.roles = roles;
     }
-    return new CurrentUserResponseDto(await this.userRepository.update(currentUser.id, userEntity));
+    await this.userRepository.update(currentUser.id, userEntity);
+    return true;
+  }
+  async getCurrentUserSetting(currentUser: UserEntity):Promise<CurrentUserSettingResponseDto>{
+    return {
+      id: currentUser.id.toString(),
+      name: currentUser.name,
+      roles: currentUser.roles.map((role) => new GetRoleResponseDto((role))),
+      email: currentUser.email
+    }
   }
 }

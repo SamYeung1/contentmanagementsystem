@@ -1,7 +1,7 @@
 import {  Transform } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CurrentUserDto {
+export class CurrentUserSettingDto {
   @IsNotEmpty()
   @IsOptional()
   @Transform(({ value }) => value.trim())
@@ -12,7 +12,7 @@ export class CurrentUserDto {
   @IsNotEmpty()
   @IsArray()
   roles:number[]
-  constructor(params?: Partial<CurrentUserDto>) {
+  constructor(params?: Partial<CurrentUserSettingDto>) {
     Object.assign(this, params);
   }
 }

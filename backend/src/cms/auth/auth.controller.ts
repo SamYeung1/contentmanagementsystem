@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
@@ -10,7 +10,8 @@ import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { Serialize } from '../../common/interceptor';
 import { CurrentUserResponseDto } from './dto/current-user-response.dto';
 import { NoRole } from '../../common/decorator';
-import { CurrentUserDto } from './dto/current-user.dto';
+import { CurrentUserSettingDto } from './dto/current-user-setting.dto';
+import { CurrentUserSettingResponseDto } from './dto/current-user-setting-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -42,10 +43,16 @@ export class AuthController {
     return new CurrentUserResponseDto(currentUser);
   }
 
-  @Put('me')
+  @Put('me/setting')
   @NoRole()
-  @Serialize(CurrentUserResponseDto)
-  async updateCurrentUser(@CurrentUser() currentUser: UserEntity, @Body() currentUserDto: CurrentUserDto): Promise<CurrentUserResponseDto> {
-    return this.authService.updateCurrentUser(currentUser,currentUserDto);
+  @HttpCode(HttpStatus.CREATED)
+  async updateCurrentUserSetting(@CurrentUser() currentUser: UserEntity, @Body() currentUserSettingDto: CurrentUserSettingDto): Promise<void> {
+    await this.authService.updateCurrentUserSetting(currentUser, currentUserSettingDto);
+  }
+
+  @Get('me/setting')
+  @NoRole()
+  async getCurrentUserSetting(@CurrentUser() currentUser: UserEntity): Promise<CurrentUserSettingResponseDto> {
+    return this.authService.getCurrentUserSetting(currentUser);
   }
 }
