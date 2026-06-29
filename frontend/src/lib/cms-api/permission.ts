@@ -1,48 +1,40 @@
-import AuthException from '@/exception/api/auth-exception';
 import PageResponse from '@/type/base/page-response';
 import By from '@/type/base/by';
 import Direction from '@/type/base/direction';
 import { getCurrentUser } from '@/lib/user-session';
 import { API, PAGINATION_OPTIONS } from '@/config/setting';
-import { Role } from '@/type/cms';
-import ApiException from '@/exception/api/api-exception';
 import { handleError } from '@/lib/util';
+import ApiException from '@/exception/api/api-exception';
 
-interface UserResponse {
+interface PermissionResponse {
   id: number;
-  email: string;
   name: string;
-  roles: Role[];
+  action: string;
   createdAt: string;
   updatedAt: string;
   createdBy?: By | null;
   updatedBy?: By | null;
 }
 
-interface UserListRequest {
+interface PermissionListRequest {
   orderBy: Direction;
   search?: string | null;
   page?: number | null;
   listAll?: boolean;
 }
-
-export interface UserCreateRequest {
-  email: string;
-  password: string;
+export interface PermissionCreateRequest {
+  action: string;
   name: string;
-  roles: string[];
 }
 
 
-export interface UserEditRequest extends Omit<UserCreateRequest, 'password'> {
-  password?: string;
+export interface PermissionEditRequest extends PermissionCreateRequest {
 }
-
-export async function listUser(input: UserListRequest): Promise<PageResponse<UserResponse>> {
+export async function listPermission(input: PermissionListRequest): Promise<PageResponse<PermissionResponse>> {
   const bearerToken: string = (await getCurrentUser()).access_token;
-  let url = `${API.CMS_API}/users?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
+  let url = `${API.CMS_API}/permissions?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
   if (input.search !== null && input.search !== undefined) {
-    url += `&filter[like][name]=${input.search}&filter[like][email]=${input.search}`;
+    url += `&filter[like][name]=${input.search}`;
   }
   if (input.page !== null && input.page !== undefined) {
     url += `&paginate[limit]=${input.listAll === false || input.listAll === undefined ? PAGINATION_OPTIONS.limit : 0}&paginate[page]=${input.listAll === false || input.listAll === undefined ? input.page : 1}`;
@@ -59,31 +51,13 @@ export async function listUser(input: UserListRequest): Promise<PageResponse<Use
   );
   handleError(res);
   const result = await res.json();
-  return result as PageResponse<UserResponse>;
+  return result as PageResponse<PermissionResponse>;
 }
 
-export async function createUser(input: UserCreateRequest): Promise<UserResponse> {
+export async function getPermission(id: string): Promise<PermissionResponse> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/users`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${bearerToken}`,
-      },
-      body: JSON.stringify(input),
-    },
-  );
-  handleError(res);
-  const result = await res.json();
-  return result as UserResponse;
-}
-
-export async function getUser(id: string): Promise<UserResponse> {
-  const bearerToken: string = (await getCurrentUser()).access_token;
-  const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/users/${id}`,
+    `${process.env.CMS_API_BASE_URL}/permissions/${id}`,
     {
       method: 'GET',
       headers: {
@@ -95,16 +69,30 @@ export async function getUser(id: string): Promise<UserResponse> {
   handleError(res);
   const result = await res.json();
 
-  if (!result) {
-    throw new AuthException();
-  }
-  return result as UserResponse;
+  return result as PermissionResponse;
 }
-
-export async function editUser(id: string, input: UserEditRequest): Promise<UserResponse> {
+export async function createPermission(input: PermissionCreateRequest): Promise<PermissionResponse> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/users/${id}`,
+    `${process.env.CMS_API_BASE_URL}/permissions`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearerToken}`,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+  handleError(res);
+  const result = await res.json();
+  return result as PermissionResponse;
+}
+
+export async function editPermission(id: string, input: PermissionEditRequest): Promise<PermissionResponse> {
+  const bearerToken: string = (await getCurrentUser()).access_token;
+  const res = await fetch(
+    `${process.env.CMS_API_BASE_URL}/permissions/${id}`,
     {
       method: 'PUT',
       headers: {
@@ -116,13 +104,13 @@ export async function editUser(id: string, input: UserEditRequest): Promise<User
   );
   handleError(res);
   const result = await res.json();
-  return result as UserResponse;
+  return result as PermissionResponse;
 }
 
-export async function deleteUser(id: string): Promise<boolean> {
+export async function deletePermission(id: string): Promise<boolean> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   const res = await fetch(
-    `${process.env.CMS_API_BASE_URL}/users/${id}`,
+    `${process.env.CMS_API_BASE_URL}/permissions/${id}`,
     {
       method: 'DELETE',
       headers: {

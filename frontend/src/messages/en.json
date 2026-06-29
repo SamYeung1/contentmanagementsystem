@@ -31,6 +31,17 @@
       "roles": "Roles"
     }
   },
+  "PermissionPage": {
+    "page_title": "Permission",
+    "page_title_edit": "Edit Permission",
+    "page_title_create": "Create Permission",
+    "button_add_permission": "Create Permission",
+    "form": {
+      "name": "Name",
+      "action": "Action",
+      "resource": "Resource"
+    }
+  },
   "DashboardPage": {
     "page_title": "Dashboard"
   },

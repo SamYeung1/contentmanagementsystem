@@ -1,10 +1,9 @@
 'use client';
 import React, { JSX, useMemo, useState } from 'react';
 import { HeadCellItem } from '@/components/data-table/type';
-import { User } from '@/type/cms';
+import { Permission } from '@/type/cms';
 import ServerDataTable from '@/components/data-table/server-data-table';
 import { SortableStatus } from '@/components/data-table/data-table';
-import { Badge } from 'flowbite-react';
 import DropdownManagementMenu, { DropdownManagementMenuPermission } from '@/components/dropdown-management-menu';
 import { BreadcrumbItem } from '@/components/layouts/cms/base/cms-breadcrumb';
 import DataTableHeader from '@/components/data-table/data-table-header';
@@ -15,20 +14,20 @@ import CmsMain from '@/components/layouts/cms/cms-main';
 import { useRouter } from 'next/navigation';
 import { useAlert } from '@/context/alert-context';
 
-const PAGE_NAME = 'user';
+const PAGE_NAME = 'permission';
 const DEFAULT_SORT: SortableStatus = {
   key: 'id',
   direction: 'ASC',
 };
 
-export default function UserPage(): JSX.Element {
+export default function PermissionPage(): JSX.Element {
   const t = useTranslations();
   const alert = useAlert();
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const breadcrumbItems: BreadcrumbItem[] = useMemo(() => [
     { text: t('DashboardPage.page_title'), href: '/dashboard' },
-    { text: t('UserPage.page_title') },
+    { text: t('PermissionPage.page_title') },
   ], [t]);
   const { user } = useCurrentUser();
   const headers: HeadCellItem[] = useMemo(() => {
@@ -39,45 +38,21 @@ export default function UserPage(): JSX.Element {
     const hasAccess = Object.values(rowPermissions).some((allowed) => allowed);
     return [
       { label: 'Id', key: 'id' },
-      { label: 'Email', key: 'email' },
       { label: 'Name', key: 'name' },
-      {
-        label: 'Roles',
-        key: 'roles',
-        sortable: false,
-        render: ({ item }: { item: User }) => {
-          const limit = 3;
-          const visibleRoles = item.roles.slice(0, limit);
-          const hiddenCount = item.roles.length - limit;
-          return (
-            <span className="flex flex-wrap gap-2">
-            {visibleRoles.map((role, index) => (
-              <Badge color="info" key={`badge_role_${index}`}>
-                {role.name}
-              </Badge>
-            ))}
-              {hiddenCount > 0 && (
-                <Badge color="info">
-                  {hiddenCount}+
-                </Badge>
-              )}
-          </span>
-          );
-        },
-      },
+      { label: 'Action', key: 'action' },
       {
         label: '',
         key: 'action',
         sortable: false,
         hidden: !hasAccess,
-        render: ({ item }: { item: User }) => {
+        render: ({ item }: { item: Permission }) => {
           return (
             <div className="flex justify-end">
               {<DropdownManagementMenu
                 permission={rowPermissions}
                 onMenuClicked={(actionId) => {
                   if (actionId === '1') {
-                    router.push(`/user/edit/${item.id}`);
+                    router.push(`/permission/edit/${item.id}`);
                   } else if (actionId === '-1') {
                     alert?.showConfirm(t('Common.modal.delete_confirm_message'),async () => {
                       await handleDelete(item.id.toString());
@@ -98,7 +73,7 @@ export default function UserPage(): JSX.Element {
   const handleDelete = async (id: string) => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/user/${id}`, {
+      const response = await fetch(`/api/permission/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -116,10 +91,10 @@ export default function UserPage(): JSX.Element {
 
   return <CmsMain breadcrumbItems={breadcrumbItems}>
     <DataTableHeader addButton={{
-      title: t('UserPage.button_add_user'),
-      onClick: () => router.push('/user/edit'),
+      title: t('PermissionPage.button_add_permission'),
+      onClick: () => router.push('/permission/edit'),
       permission: { canAdd: checkPermission(user, 'CREATE', PAGE_NAME) },
     }} onSearch={handleSearch} />
-    <ServerDataTable defaultSort={DEFAULT_SORT} header={headers} url={'/api/user'} query={queryParams} />
+    <ServerDataTable defaultSort={DEFAULT_SORT} header={headers} url={'/api/permission'} query={queryParams} />
   </CmsMain>;
 }

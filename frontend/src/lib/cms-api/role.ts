@@ -16,14 +16,14 @@ interface RoleResponse {
   updatedBy?: By | null;
 }
 
-interface RoleRequest {
+interface RoleListRequest {
   orderBy: Direction;
   search?: string | null;
   page?: number | null;
   listAll?: boolean;
 }
 
-export async function listUser(input: RoleRequest): Promise<PageResponse<RoleResponse>> {
+export async function listUser(input: RoleListRequest): Promise<PageResponse<RoleResponse>> {
   const bearerToken: string = (await getCurrentUser()).access_token;
   let url = `${API.CMS_API}/roles?orderBy[${input.orderBy.key}]=${input.orderBy.direction}`;
   if (input.search !== null && input.search !== undefined) {

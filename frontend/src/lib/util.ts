@@ -61,3 +61,10 @@ export function handleErrorForm(error: unknown,t:_Translator,formData: FormData)
   console.error(error);
   return { serverError: { success: false, message: 'Error'}, payload: formData };
 }
+export function handleErrorAPI(e:unknown){
+  console.error(e);
+  if(e instanceof PermissionException){
+    return Response.json({}, { status: 403 });
+  }
+  return Response.json({}, { status: 404 });
+}

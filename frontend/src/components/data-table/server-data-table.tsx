@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import PageResponse from '@/type/base/page-response';
-import { UserResponse } from '@/type/cms';
+import { User } from '@/type/cms';
 import DataTable, { ServerModePagination, SortableStatus } from '@/components/data-table/data-table';
 import { PAGINATION_OPTIONS } from '@/config/setting';
 import { HeadCellItem } from '@/components/data-table/type';
@@ -16,7 +16,7 @@ interface ServerDataTableProps {
 }
 
 export default function ServerDataTable({ header, defaultSort, url, query }: ServerDataTableProps) {
-  const [pageData, setPageData] = useState<PageResponse<UserResponse>>({ total: 0, results: [] });
+  const [pageData, setPageData] = useState<PageResponse<User>>({ total: 0, results: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const [sortableStatus, setSortableStatus] = useState(defaultSort);
